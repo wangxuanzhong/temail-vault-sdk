@@ -12,6 +12,7 @@ compile_cpp:
 		-o libVaultSdk.so
 
 compile_java:
+  mkdir target
 	$(JAVA_HOME)/bin/javac -h cpp -d target src/main/java/com/syswin/temail/vault/sdk/VaultSdk.java
 
 test:

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <chrono>
+#include <functional>
 
 using namespace std;
 using namespace std::chrono;
@@ -16,6 +17,7 @@ using namespace std::chrono;
 #define ERR_FILEENCRY_FAILED 10000006
 #define ERR_ALG_INVALID    10000007
 #define ERR_TSBFOLDER_DUPFOLDER  10000008
+#define ERR_TSBCALLBACK_INVALID 10000009
 
 #define ERR_PUBORPRIKEY_INVALID 10001001
 #define ERR_ENCRYORDECRY_FAILED 10001002
@@ -38,7 +40,8 @@ namespace tsb
 	}tsbCryptAlgType;
 
 	typedef std::vector<char> BufferArray;
-
+	typedef std::function<long(std::string tid,long code,std::string &key)> KeyCallBack;
+	
 	class ITSBSDK
 	{
 	public:
@@ -87,14 +90,14 @@ namespace tsb
 		@param safeKey[IN] : safe code ,bkPath[OUT]:back up path
 		@return errcode
 		*/
-		virtual long tsbGetBkCFS(const char *safeKey,BufferArray &bkPath ) = 0;
+		virtual long tsbGetBkCFS(BufferArray &bkPath ) = 0;
 		/*
 		tsbRestoreCFS
 		@description:restore back file for a object
 		@param safeKey[IN] : safe code ,tsfsFolder[IN]:cfg folder,bkCFS[IN]: back file
 		@return errcode.
 		*/
-		virtual long tsbRestoreCFS(const char *safeKey, const char *bkCFS ) = 0;
+		virtual long tsbRestoreCFS(const char *bkCFS ) = 0;
 		/*
 		tsbDeleteCFS
 		@description:remove object's cfs,when remove a object ,should remove a cfs .
@@ -103,20 +106,21 @@ namespace tsb
 		*/
 		virtual long tsbDeleteCFS() = 0;
 	};
-	/////////////////////////Notice/////////////////////////
-	/////SHOULD CALL setTSBSDKFolder BEFORE INITSDK/////////
-	////////////////////////////////////////////////////////
+	/////////////////////////////////Notice///////////////////////////////
+	/////SHOULD CALL setCallBack & setTSBSDKFolder BEFORE INITSDK/////////
+	//////////////////////////////////////////////////////////////////////
 	/*
-	set TSB SDKFolder
+	set TSB SDKFolder,
 	*/
+	long setCallBack(KeyCallBack callBack);
 	long setTSBSDKFolder(const char *tsbFolder);
 	/*
 	init sdk ogject
 	*/
-	ITSBSDK * initTSBSDK(const char *tid, tsbCryptAlgType alg, const char *loginKey);
+	ITSBSDK * initTSBSDK(const char *tid, tsbCryptAlgType alg);
 	/*
 	un init sdk object
 	*/
-	void destoryTSBSDK();
+	void destoryTSBSDK(const char *tid = NULL);
 }
 #endif
