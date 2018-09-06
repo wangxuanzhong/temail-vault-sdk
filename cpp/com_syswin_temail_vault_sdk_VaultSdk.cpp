@@ -13,7 +13,7 @@ JNIEXPORT jstring JNICALL Java_com_syswin_temail_vault_sdk_VaultSdk_generateKeyP
   tsb::BufferArray publicKey;
 
   tsb::setTSBSDKFolder("/tmp");
-  tsb::setCallBack(setPassword);
+//  tsb::setCallBack(setPassword);
   tsb::ITSBSDK* sdk = tsb::initTSBSDK(pTemail, tsb::tsbCryptAlgType::TAES256CBC);
 
   sdk->tsbGetPubKey(publicKey);
