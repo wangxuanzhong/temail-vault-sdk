@@ -1,7 +1,7 @@
 all: compile_java compile_cpp
 
 SHARED_OPTION=-shared
-CC_LIB=-L./lib -ltsb -lstdc++
+CC_LIB=-L./lib -ltsb -lssl -lcrypto -luuid -lstdc++
 LIB_PATH=${LD_LIBRARY_PATH}
 
 compile_cpp:

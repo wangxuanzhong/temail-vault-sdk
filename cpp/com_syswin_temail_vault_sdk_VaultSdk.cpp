@@ -2,7 +2,7 @@
 #include "tsbApi.h"
 
 long setPassword(std::string tid, long code, std::string &key) {
-  key = "password";
+  key = "123456";
   return code;
 }
 
@@ -14,7 +14,7 @@ JNIEXPORT jstring JNICALL Java_com_syswin_temail_vault_sdk_VaultSdk_generateKeyP
 
   tsb::setTSBSDKFolder("/tmp");
 //  tsb::setCallBack(setPassword);
-  tsb::ITSBSDK* sdk = tsb::initTSBSDK(pTemail, tsb::tsbCryptAlgType::TAES256CBC);
+  tsb::ITSBSDK* sdk = tsb::initTSBSDK(pTemail, tsb::tsbCryptAlgType::TECC);
 
   sdk->tsbGetPubKey(publicKey);
 
