@@ -8,12 +8,11 @@ compile_cpp:
 	g++ $(SHARED_OPTION) -fPIC -std=c++0x \
 		-I${JAVA_HOME}/include \
 		-I${JAVA_HOME}/include/linux \
-		cpp/com_syswin_temail_vault_sdk_VaultSdk.cpp $(CC_LIB) \
-		-o libVaultSdk.so
+		cpp/TSBJni.cpp $(CC_LIB) \
+		-o libTSBJni.so
 
 compile_java:
-  mkdir target
-	$(JAVA_HOME)/bin/javac -h cpp -d target src/main/java/com/syswin/temail/vault/sdk/VaultSdk.java
+	$(JAVA_HOME)/bin/javac -h cpp -d target src/main/java/com/temail/tsb/TSBSdk.java src/main/java/com/syswin/temail/vault/sdk/VaultSdk.java
 
 test:
 	export LD_LIBRARY_PATH=${LIB_PATH}:$(CURDIR)/lib
@@ -21,5 +20,5 @@ test:
 
 clean:
 	-rm -rfv target/*
-	-rm cpp/com_syswin_temail_vault_sdk_VaultSdk.h
-	-rm -f lib/libVaultSdk.so
+	-rm cpp/com_temail_tsb_TSBSdk.h
+	-rm -f lib/libTSBJni.so
