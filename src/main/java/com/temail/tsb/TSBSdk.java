@@ -36,5 +36,4 @@ public final class TSBSdk {
 
   public static native boolean verifySignature(byte[] context, byte[] signed);
 
-
 }

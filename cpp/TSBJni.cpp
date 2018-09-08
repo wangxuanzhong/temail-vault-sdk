@@ -16,49 +16,20 @@ static jobject javaCallback = nullptr;
 static tsb::ITSBSDK *g_sdk = nullptr;
 
 static jboolean initTSBSDK(JNIEnv *env, jclass clz, jstring tid, jint type) {
+
     if (tid == nullptr || (type != 0) && (type != 1)) {
         return JNI_FALSE;
     }
-
-
-    auto callback = [](std::string tid, long code, std::string &key) -> long {
-        if (g_vm == nullptr) {
-            return 0;
-        }
-        JNIEnv *env1 = NULL;
-        g_vm->GetEnv((void **) &env1, JNI_VERSION_1_6);
-        if (javaCallback && env1) {
-            jclass callbackClz = env1->GetObjectClass(javaCallback);
-            jmethodID onCallMethodId = env1->GetMethodID(callbackClz, "onResult",
-                                                         "(Ljava/lang/String;JLjava/lang/String;)J");
-            if (onCallMethodId == nullptr) {
-                return 0;
-            }
-            jstring jstr_tid = env1->NewStringUTF(tid.c_str());
-            jstring jstr_key = env1->NewStringUTF(key.c_str());
-
-            jint ret = env1->CallIntMethod(callbackClz, onCallMethodId, jstr_tid,
-                                           (jint) code, jstr_key);
-
-            return ret;
-        }
-        return 0;
-
-    };
-    //tsb::setCallBack(callback);
-
     const char *c_tid = env->GetStringUTFChars(tid, NULL);
-    tsb::ITSBSDK *sdk = tsb::initTSBSDK(c_tid, tsb::tsbCryptAlgType::TECC);
+    tsb::ITSBSDK *sdk = tsb::initTSBSDK(c_tid, (tsb::tsbCryptAlgType) type);
 
     if (c_tid) {
         env->ReleaseStringUTFChars(tid, c_tid);
     }
     jboolean Inited = sdk != nullptr ? JNI_TRUE : JNI_FALSE;
-
     if (Inited) {
         g_sdk = sdk;
     }
-
     return Inited;
 
 }
@@ -77,12 +48,40 @@ static void setTSBSDKFolder(JNIEnv *env, jclass clz, jstring folder) {
 
 }
 
+static long _callbackImp(std::string tid,long code,std::string &key)
+{
+	if (g_vm == 0)
+		return -1;
+
+    	JNIEnv *env1 = nullptr;
+    	if (g_vm->GetEnv((void **) &env1, JNI_VERSION_1_6) != JNI_OK) {
+        	return -1;
+    	}
+	if (javaCallback && env1) {
+                jclass callbackClz = env1->GetObjectClass(javaCallback);
+                jmethodID onCallMethodId = env1->GetMethodID(callbackClz, "onResult",
+                                                             "(Ljava/lang/String;JLjava/lang/String;)J");
+                if (onCallMethodId == nullptr) {
+                    return 0;
+                }
+                jstring jstr_tid = env1->NewStringUTF(tid.c_str());
+                jstring jstr_key = env1->NewStringUTF(key.c_str());
+
+                jint ret = env1->CallIntMethod(callbackClz, onCallMethodId, jstr_tid, (jint) code, jstr_key);
+
+                return ret;
+        }
+        return 0;
+}
+
 static void setCallback(JNIEnv *env, jclass clz, jobject callback) {
+    printf("====enter setCallback \n");
     if (javaCallback != nullptr) {
         env->DeleteGlobalRef(javaCallback);
     }
     javaCallback = env->NewGlobalRef(callback);
-
+    long rt = tsb::setCallBack(_callbackImp);
+    printf("********setCallBack return %ld\n", rt);
 }
 
 
