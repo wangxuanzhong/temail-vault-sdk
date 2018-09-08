@@ -15,7 +15,7 @@ public final class TSBSdk {
 
   public interface KeyCallback {
 
-    int onResult(String tid, int code, String key);
+    long onResult(String tid, long code, String key);
   }
 
   public static native boolean initTSBSDK(String tid, int type);

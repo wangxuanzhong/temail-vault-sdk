@@ -3,6 +3,7 @@ package com.syswin.temail.vault.sdk;
 import static com.syswin.temail.vault.sdk.VaultSdk.Algorithm.ECC;
 
 import com.temail.tsb.TSBSdk;
+import com.temail.tsb.TSBSdk.KeyCallback;
 import java.util.Base64;
 
 public class VaultSdk {
@@ -57,7 +58,13 @@ public class VaultSdk {
     TSBSdk.setTSBSDKFolder(backupDir);
 
     // TODO: 2018/9/7 set up password per temail?
-    TSBSdk.setKeyCallback((tid, code, key) -> code);
+    TSBSdk.setKeyCallback(new KeyCallback() {
+      @Override
+      public long onResult(String tid, long code, String key) {
+        key = "123456";
+        return 0;
+      }
+    });
 
     return TSBSdk.initTSBSDK(temail, ECC.code());
   }
@@ -75,7 +82,7 @@ public class VaultSdk {
   }
 
   public String decrypt(Algorithm algorithm, String key, String encrypted) {
-    return encode(TSBSdk.decryptData(algorithm.code(), key.getBytes(), encrypted.getBytes()));
+    return encode(TSBSdk.decryptData(algorithm.code(), key.getBytes(), Base64.getDecoder().decode(encrypted.getBytes())));
   }
 
   public String sign(Algorithm algorithm, String text) {
