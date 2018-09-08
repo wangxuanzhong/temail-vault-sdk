@@ -12,11 +12,13 @@ compile_cpp:
 		-o libTSBJni.so
 
 compile_java:
-	$(JAVA_HOME)/bin/javac -h cpp -d target src/main/java/com/temail/tsb/TSBSdk.java src/main/java/com/syswin/temail/vault/sdk/VaultSdk.java
+	$(JAVA_HOME)/bin/javac -h cpp -d target src/main/java/com/temail/tsb/TSBSdk.java \
+		src/main/java/com/syswin/temail/vault/sdk/VaultSdk.java \
+		src/test/java/com/syswin/temail/vault/sdk/VaultSdkTest.java
 
 test:
 	export LD_LIBRARY_PATH=${LIB_PATH}:$(CURDIR)/lib
-	$(JAVA_HOME)/bin/java -Djava.library.path="$(CURDIR)/lib:$(CURDIR)/" -cp target com.syswin.temail.vault.sdk.VaultSdk
+	$(JAVA_HOME)/bin/java -Djava.library.path="$(CURDIR)/lib:$(CURDIR)/" -cp target com.syswin.temail.vault.sdk.VaultSdkTest
 
 clean:
 	-rm -rfv target/*
