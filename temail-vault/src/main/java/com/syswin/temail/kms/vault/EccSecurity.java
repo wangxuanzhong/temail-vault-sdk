@@ -52,7 +52,7 @@ public class EccSecurity implements Security {
 
   // TODO: 2018/9/13 copied from TAIP proxy project and test cases / refactoring is in order
   @Override
-  public byte[] encrypt(SecretKey privateKey, String plaintext)
+  public byte[] encrypt(PublicKey privateKey, String plaintext)
       throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException {
 
     Cipher c1 = Cipher.getInstance(ALGORITHM);
@@ -61,7 +61,7 @@ public class EccSecurity implements Security {
   }
 
   @Override
-  public String decrypt(SecretKey shareKey, byte[] encryptedBytes) throws Exception {
+  public String decrypt(PrivateKey shareKey, byte[] encryptedBytes) throws Exception {
     Cipher c1 = Cipher.getInstance(ALGORITHM);
     c1.init(Cipher.DECRYPT_MODE, shareKey);
     byte[] output = c1.doFinal(encryptedBytes);
@@ -77,11 +77,9 @@ public class EccSecurity implements Security {
   }
 
   @Override
-  public boolean verify(byte[] publicKey, byte[] unsigned, byte[] signed) {
+  public boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed) {
     try {
-      X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey);
-      PublicKey key = factory.generatePublic(keySpec);
-      signature.initVerify(key);
+      signature.initVerify(publicKey);
       signature.update(unsigned);
       return signature.verify(signed);
     } catch (Exception e) {

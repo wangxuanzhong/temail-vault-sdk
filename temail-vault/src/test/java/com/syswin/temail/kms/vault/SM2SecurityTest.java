@@ -26,6 +26,7 @@ public class SM2SecurityTest {
 
     publicKey =  keyPair.getPublic();
     privateKey =  keyPair.getPrivate();
+    System.out.println(Base64.getEncoder().encodeToString(publicKey.getEncoded()));
   }
 
   @Test
@@ -33,7 +34,7 @@ public class SM2SecurityTest {
     final byte[] signed = security.sign(privateKey, unsigned);
 
     boolean verified = security.verify(
-        publicKey.getEncoded(),
+        publicKey,
         unsigned,
         signed);
 
@@ -43,14 +44,14 @@ public class SM2SecurityTest {
   @Ignore
   @Test
   public void shouldVerifySignatureByClient() {
-    final byte[] signed = Base64.getDecoder().decode("TUlHSUFrSUIxeTJTZXhkKzVmYXlIVzIySUVRQjZUa1l3UFgwbmI3L1pzVVVmdSs0eUxXVW03NG9EbnpBV3M5ejdNOCtWUldCZlhaODF1RVhTWGUrNE9reStHNm9vMWNDUWdGM0JDZk5tRmhEMUxCd1YzQTFyRkYzdFJVZCt3UitpT0gwbis5NmNOTG5UbFhvUURDL2VhUE5qUGN1VEdpTDgvOXpUZjcxUkF2R21JenVHbEpIUXhDR0pBPT0=");
-
-    boolean verified = security.verify(
-        Base64.getDecoder().decode("TUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCOFZVMHk5QmdXbUNReHBSTzdYNXc2MHlsTHlCOGZBOGJtYzk4eTh2R0VQaWcycXBFL2JOTEpGMGxHT09NVXkrSmxPdGcxekFtYU16bWVSWFFrcFJtZERRQU84eUNzb2sxbE4rUTZyV0ttNEpnZ1J1VmZKOE9nenM4WDNleURHTGthQ2lJTk9tQWZtOWdNNDNNL2hETFloaTU5TGtZcGp0Z3VraldrRkVqeWJwUitmRT0="),
-        "sean@t.email".getBytes(),
-        signed);
-
-    assertThat(verified).isTrue();
+//    final byte[] signed = Base64.getDecoder().decode("TUlHSUFrSUIxeTJTZXhkKzVmYXlIVzIySUVRQjZUa1l3UFgwbmI3L1pzVVVmdSs0eUxXVW03NG9EbnpBV3M5ejdNOCtWUldCZlhaODF1RVhTWGUrNE9reStHNm9vMWNDUWdGM0JDZk5tRmhEMUxCd1YzQTFyRkYzdFJVZCt3UitpT0gwbis5NmNOTG5UbFhvUURDL2VhUE5qUGN1VEdpTDgvOXpUZjcxUkF2R21JenVHbEpIUXhDR0pBPT0=");
+//
+//    boolean verified = security.verify(
+//        Base64.getDecoder().decode("TUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCOFZVMHk5QmdXbUNReHBSTzdYNXc2MHlsTHlCOGZBOGJtYzk4eTh2R0VQaWcycXBFL2JOTEpGMGxHT09NVXkrSmxPdGcxekFtYU16bWVSWFFrcFJtZERRQU84eUNzb2sxbE4rUTZyV0ttNEpnZ1J1VmZKOE9nenM4WDNleURHTGthQ2lJTk9tQWZtOWdNNDNNL2hETFloaTU5TGtZcGp0Z3VraldrRkVqeWJwUitmRT0="),
+//        "sean@t.email".getBytes(),
+//        signed);
+//
+//    assertThat(verified).isTrue();
   }
 
   @Test
@@ -58,7 +59,7 @@ public class SM2SecurityTest {
     byte[] signed = security.sign(security.getKeyPair().getPrivate(), unsigned);
 
     boolean verified = security.verify(
-        publicKey.getEncoded(),
+        publicKey,
         unsigned,
         signed);
 
@@ -68,7 +69,7 @@ public class SM2SecurityTest {
   @Test
   public void shouldRejectSignatureIfNotSigned() {
     boolean verified = security.verify(
-        publicKey.getEncoded(),
+        publicKey,
         unsigned,
         unsigned);
 

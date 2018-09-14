@@ -14,5 +14,5 @@ public interface Security {
 
   byte[] sign(PrivateKey privateKey, byte[] unsigned) throws Exception;
 
-  boolean verify(byte[] publicKey, byte[] unsigned, byte[] signed);
+  boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed);
 }
