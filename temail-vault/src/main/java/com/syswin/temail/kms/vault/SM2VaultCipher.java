@@ -10,6 +10,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
@@ -27,7 +28,7 @@ import org.bouncycastle.math.ec.ECPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SM2Security implements Security {
+public class SM2VaultCipher implements VaultCipher {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -43,8 +44,8 @@ public class SM2Security implements Security {
   private final ECDomainParameters domainParams;
   private final ECParameterSpec ecParamSpec;
 
-  public SM2Security() {
-    java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+  public SM2VaultCipher() {
+    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
     ECCurve curve = new ECCurve.Fp(P, A, B, N, ONE);
     ECPoint g = curve.createPoint(GX, GY);

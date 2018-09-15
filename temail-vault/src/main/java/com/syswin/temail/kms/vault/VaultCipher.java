@@ -4,7 +4,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public interface Security {
+public interface VaultCipher {
 
   KeyPair getKeyPair() throws Exception;
 

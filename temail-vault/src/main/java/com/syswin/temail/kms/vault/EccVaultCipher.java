@@ -15,16 +15,14 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
-import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EccSecurity implements Security {
+public class EccVaultCipher implements VaultCipher {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String EC = "EC";
@@ -34,7 +32,7 @@ public class EccSecurity implements Security {
   private final Signature signature;
   private final KeyFactory factory;
 
-  public EccSecurity() {
+  public EccVaultCipher() {
     try {
       signature = Signature.getInstance(SHA_256_WITH_ECDSA);
       factory = KeyFactory.getInstance(EC);
