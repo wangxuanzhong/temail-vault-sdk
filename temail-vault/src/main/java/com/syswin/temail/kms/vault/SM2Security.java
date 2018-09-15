@@ -6,14 +6,10 @@ import static org.bouncycastle.math.ec.ECConstants.ONE;
 
 import java.lang.invoke.MethodHandles;
 import java.math.BigInteger;
-import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Signature;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
@@ -36,10 +32,7 @@ public class SM2Security implements Security {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final String EC = "EC";
-  private static final String BC = "BC";
 
-  private final Signature signature;
-  private final KeyFactory factory;
   private static final BigInteger GX = new BigInteger("32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7", 16);
   private static final BigInteger GY = new BigInteger("BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0", 16);
   private static final BigInteger N = new BigInteger("fffffffeffffffffffffffffffffffff7203df6b21c6052b53bbf40939d54123", 16);
@@ -51,21 +44,14 @@ public class SM2Security implements Security {
   private final ECParameterSpec ecParamSpec;
 
   public SM2Security() {
-    try {
-      java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-      signature = Signature.getInstance("SM3withSM2");
-      factory = KeyFactory.getInstance(EC, BC);
+    ECCurve curve = new ECCurve.Fp(P, A, B, N, ONE);
+    ECPoint g = curve.createPoint(GX, GY);
 
-      ECCurve curve = new ECCurve.Fp(P, A, B, N, ONE);
-      ECPoint g = curve.createPoint(GX, GY);
-
-      domainParams = new ECDomainParameters(curve, g, N);
-      keyPairGenerator = new ECKeyPairGenerator();
-      ecParamSpec = new ECParameterSpec(curve, g, N);
-    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-      throw new IllegalStateException(e);
-    }
+    domainParams = new ECDomainParameters(curve, g, N);
+    keyPairGenerator = new ECKeyPairGenerator();
+    ecParamSpec = new ECParameterSpec(curve, g, N);
   }
 
   @Override
