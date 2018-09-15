@@ -22,7 +22,7 @@ import javax.crypto.NoSuchPaddingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EccVaultCipher implements VaultCipher {
+public class EccVaultCipher implements AsymmetricCipher {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String EC = "EC";
@@ -30,22 +30,24 @@ public class EccVaultCipher implements VaultCipher {
   public static final String SHA_256_WITH_ECDSA = "SHA256withECDSA";
 
   private final Signature signature;
-  private final KeyFactory factory;
 
   public EccVaultCipher() {
     try {
       signature = Signature.getInstance(SHA_256_WITH_ECDSA);
-      factory = KeyFactory.getInstance(EC);
     } catch (NoSuchAlgorithmException e) {
       throw new IllegalStateException(e);
     }
   }
 
   @Override
-  public KeyPair getKeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance(EC);
-    keyGen.initialize(new ECGenParameterSpec(PARAMS));
-    return keyGen.generateKeyPair();
+  public KeyPair getKeyPair() {
+    try {
+      KeyPairGenerator keyGen = KeyPairGenerator.getInstance(EC);
+      keyGen.initialize(new ECGenParameterSpec(PARAMS));
+      return keyGen.generateKeyPair();
+    } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   // TODO: 2018/9/13 copied from TAIP proxy project and test cases / refactoring is in order
@@ -84,5 +86,10 @@ public class EccVaultCipher implements VaultCipher {
       LOG.error("Failed to verify signature of {} with public key {}", unsigned, publicKey, e);
     }
     return false;
+  }
+
+  @Override
+  public CipherAlgorithm algorithm() {
+    return CipherAlgorithm.ECDSA;
   }
 }

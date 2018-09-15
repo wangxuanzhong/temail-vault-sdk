@@ -19,7 +19,7 @@ public class SM2VaultCipherTest {
   private SM2VaultCipher security;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     security = new SM2VaultCipher();
 
     KeyPair keyPair = security.getKeyPair();

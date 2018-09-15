@@ -4,9 +4,9 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public interface VaultCipher {
+public interface AsymmetricCipher {
 
-  KeyPair getKeyPair() throws Exception;
+  KeyPair getKeyPair();
 
   byte[] encrypt(PublicKey publicKey, String plaintext) throws Exception;
 
@@ -15,4 +15,6 @@ public interface VaultCipher {
   byte[] sign(PrivateKey privateKey, byte[] unsigned) throws Exception;
 
   boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed);
+
+  CipherAlgorithm algorithm();
 }

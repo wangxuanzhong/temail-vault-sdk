@@ -19,7 +19,7 @@ public class EccVaultCipherTest {
   private EccVaultCipher security;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     security = new EccVaultCipher();
 
     KeyPair keyPair = security.getKeyPair();

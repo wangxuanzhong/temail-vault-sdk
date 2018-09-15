@@ -1,5 +1,6 @@
 package com.syswin.temail.kms.vault;
 
+import static com.syswin.temail.kms.vault.CipherAlgorithm.SM2;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.CONFIGURATION;
 import static org.bouncycastle.math.ec.ECConstants.ONE;
@@ -28,7 +29,7 @@ import org.bouncycastle.math.ec.ECPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SM2VaultCipher implements VaultCipher {
+class SM2VaultCipher implements AsymmetricCipher {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -44,7 +45,7 @@ public class SM2VaultCipher implements VaultCipher {
   private final ECDomainParameters domainParams;
   private final ECParameterSpec ecParamSpec;
 
-  public SM2VaultCipher() {
+  SM2VaultCipher() {
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
     ECCurve curve = new ECCurve.Fp(P, A, B, N, ONE);
@@ -105,6 +106,11 @@ public class SM2VaultCipher implements VaultCipher {
     signer.init(false, publicKeyParameters);
     signer.update(unsigned, 0, unsigned.length);
     return signer.verifySignature(signed);
+  }
+
+  @Override
+  public CipherAlgorithm algorithm() {
+    return SM2;
   }
 
   private ECPrivateKeyParameters privateKeyParameters(BCECPrivateKey privateKey) {
