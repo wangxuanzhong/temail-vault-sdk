@@ -32,17 +32,17 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   @Override
-  public byte[] encrypt(String userId, String plaintext) throws Exception {
+  public byte[] encrypt(String userId, String plaintext) {
     return cipher.encrypt(keyPair(userId).getPublic(), plaintext);
   }
 
   @Override
-  public String decrypt(String userId, byte[] encryptedBytes) throws Exception {
+  public String decrypt(String userId, byte[] encryptedBytes) {
     return cipher.decrypt(keyPair(userId).getPrivate(), encryptedBytes);
   }
 
   @Override
-  public byte[] sign(String userId, byte[] unsigned) throws Exception {
+  public byte[] sign(String userId, byte[] unsigned) {
     return cipher.sign(keyPair(userId).getPrivate(), unsigned);
   }
 

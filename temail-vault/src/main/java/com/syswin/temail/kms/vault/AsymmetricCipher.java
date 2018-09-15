@@ -8,11 +8,11 @@ public interface AsymmetricCipher {
 
   KeyPair getKeyPair();
 
-  byte[] encrypt(PublicKey publicKey, String plaintext) throws Exception;
+  byte[] encrypt(PublicKey publicKey, String plaintext);
 
-  String decrypt(PrivateKey privateKey, byte[] encryptedBytes) throws Exception;
+  String decrypt(PrivateKey privateKey, byte[] encryptedBytes);
 
-  byte[] sign(PrivateKey privateKey, byte[] unsigned) throws Exception;
+  byte[] sign(PrivateKey privateKey, byte[] unsigned);
 
   boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed);
 

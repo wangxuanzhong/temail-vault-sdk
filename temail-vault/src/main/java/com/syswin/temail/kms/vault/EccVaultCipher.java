@@ -3,22 +3,17 @@ package com.syswin.temail.kms.vault;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static sun.security.x509.CertificateAlgorithmId.ALGORITHM;
 
+import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import java.lang.invoke.MethodHandles;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,28 +47,39 @@ public class EccVaultCipher implements AsymmetricCipher {
 
   // TODO: 2018/9/13 copied from TAIP proxy project and test cases / refactoring is in order
   @Override
-  public byte[] encrypt(PublicKey privateKey, String plaintext)
-      throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException {
+  public byte[] encrypt(PublicKey privateKey, String plaintext) {
 
-    Cipher c1 = Cipher.getInstance(ALGORITHM);
-    c1.init(Cipher.ENCRYPT_MODE, privateKey);
-    return c1.doFinal(plaintext.getBytes(UTF_8));
+    try {
+      Cipher c1 = Cipher.getInstance(ALGORITHM);
+      c1.init(Cipher.ENCRYPT_MODE, privateKey);
+      return c1.doFinal(plaintext.getBytes(UTF_8));
+    } catch (Exception e) {
+      throw new VaultCipherException("Failed in encryption", e);
+    }
   }
 
   @Override
-  public String decrypt(PrivateKey shareKey, byte[] encryptedBytes) throws Exception {
-    Cipher c1 = Cipher.getInstance(ALGORITHM);
-    c1.init(Cipher.DECRYPT_MODE, shareKey);
-    byte[] output = c1.doFinal(encryptedBytes);
-    return new String(output, UTF_8);
+  public String decrypt(PrivateKey shareKey, byte[] encryptedBytes) {
+    try {
+      Cipher c1 = Cipher.getInstance(ALGORITHM);
+      c1.init(Cipher.DECRYPT_MODE, shareKey);
+      byte[] output = c1.doFinal(encryptedBytes);
+      return new String(output, UTF_8);
+    } catch (Exception e) {
+      throw new VaultCipherException("Failed in decryption", e);
+    }
   }
 
   @Override
-  public byte[] sign(PrivateKey privateKey, byte[] unsigned) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-    Signature signature = Signature.getInstance(SHA_256_WITH_ECDSA);
-    signature.initSign(privateKey);
-    signature.update(unsigned);
-    return signature.sign();
+  public byte[] sign(PrivateKey privateKey, byte[] unsigned) {
+    try {
+      Signature signature = Signature.getInstance(SHA_256_WITH_ECDSA);
+      signature.initSign(privateKey);
+      signature.update(unsigned);
+      return signature.sign();
+    } catch (Exception e) {
+      throw new VaultCipherException("Failed in message signing", e);
+    }
   }
 
   @Override

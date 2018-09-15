@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.CONFIGURATION;
 import static org.bouncycastle.math.ec.ECConstants.ONE;
 
+import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import java.lang.invoke.MethodHandles;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -69,34 +70,46 @@ class SM2VaultCipher implements AsymmetricCipher {
   }
 
   @Override
-  public byte[] encrypt(PublicKey publicKey, String plaintext) throws Exception {
-    ECPublicKeyParameters publicKeyParameters = publicKeyParams((BCECPublicKey) publicKey);
-    SM2Engine sm2Engine = new SM2Engine();
-    sm2Engine.init(true, new ParametersWithRandom(publicKeyParameters, new SecureRandom()));
-    return sm2Engine.processBlock(plaintext.getBytes(), 0, plaintext.getBytes().length);
+  public byte[] encrypt(PublicKey publicKey, String plaintext) {
+    try {
+      ECPublicKeyParameters publicKeyParameters = publicKeyParams((BCECPublicKey) publicKey);
+      SM2Engine sm2Engine = new SM2Engine();
+      sm2Engine.init(true, new ParametersWithRandom(publicKeyParameters, new SecureRandom()));
+      return sm2Engine.processBlock(plaintext.getBytes(), 0, plaintext.getBytes().length);
+    } catch (Exception e) {
+      throw new VaultCipherException("Failed in encryption", e);
+    }
   }
 
   @Override
-  public String decrypt(PrivateKey privateKey, byte[] encryptedBytes) throws Exception {
-    SM2Engine sm2Engine = new SM2Engine();
-    ECPrivateKeyParameters privateKeyParameters = privateKeyParameters((BCECPrivateKey) privateKey);
-    sm2Engine.init(false, privateKeyParameters);
-    byte[] plaintext = sm2Engine.processBlock(encryptedBytes, 0, encryptedBytes.length);
-    return new String(plaintext, UTF_8);
+  public String decrypt(PrivateKey privateKey, byte[] encryptedBytes) {
+    try {
+      SM2Engine sm2Engine = new SM2Engine();
+      ECPrivateKeyParameters privateKeyParameters = privateKeyParameters((BCECPrivateKey) privateKey);
+      sm2Engine.init(false, privateKeyParameters);
+      byte[] plaintext = sm2Engine.processBlock(encryptedBytes, 0, encryptedBytes.length);
+      return new String(plaintext, UTF_8);
+    } catch (Exception e) {
+      throw new VaultCipherException("Failed in decryption", e);
+    }
   }
 
   @Override
-  public byte[] sign(PrivateKey privateKey, byte[] unsigned) throws Exception {
-    ECPrivateKeyParameters privateKeyParameters = privateKeyParameters((BCECPrivateKey) privateKey);
+  public byte[] sign(PrivateKey privateKey, byte[] unsigned) {
+    try {
+      ECPrivateKeyParameters privateKeyParameters = privateKeyParameters((BCECPrivateKey) privateKey);
 
-    SM2Signer signer = new SM2Signer();
+      SM2Signer signer = new SM2Signer();
 
-    signer.init(true,
-        new ParametersWithRandom(privateKeyParameters,
-            new SecureRandom()));
+      signer.init(true,
+          new ParametersWithRandom(privateKeyParameters,
+              new SecureRandom()));
 
-    signer.update(unsigned, 0, unsigned.length);
-    return signer.generateSignature();
+      signer.update(unsigned, 0, unsigned.length);
+      return signer.generateSignature();
+    } catch (Exception e) {
+      throw new VaultCipherException("Failed in message signing", e);
+    }
   }
 
   @Override
