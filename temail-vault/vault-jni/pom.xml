@@ -11,5 +11,36 @@
 
   <artifactId>vault-jni</artifactId>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.syswin.temail</groupId>
+                  <artifactId>vault-native</artifactId>
+                  <version>${project.version}</version>
+                  <type>so</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes/native</outputDirectory>
+                  <destFileName>libVault.so</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
