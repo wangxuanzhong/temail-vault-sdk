@@ -69,10 +69,11 @@ public class TSBService {
   }
 
 
-
-  public String asymmetricRegister(String temail, String text) {
+  /**
+   * [非对称]加密注册，返回公钥
+   */
+  public String asymmetricRegister(String text) {
     Map map = new HashMap();
-    map.put("temail", temail);
     map.put("text", text);
     String result = post(kmsProperties.getUrlAsymmetricRegister(), map);
     Gson gs = new Gson();
@@ -80,14 +81,9 @@ public class TSBService {
     return resultDto.getData().toString();
   }
 
-
-  public String generatePublicKey(String temail) {
-    Map map = new HashMap();
-    map.put("temail", temail);
-    return post(kmsProperties.getUrlGeneratePublicKey(), map);
-  }
-
-
+  /**
+   * TODO [非对称]签名
+   */
   public String sign(String temail, String text) {
     Map map = new HashMap();
     map.put("temail", temail);
@@ -96,36 +92,9 @@ public class TSBService {
   }
 
 
-  public boolean checkSign(String temail, String signature) {
-    Map map = new HashMap();
-    map.put("temail", temail);
-    map.put("text", temail);
-    map.put("signature", signature);
-    String result = post(kmsProperties.getUrlCheckSign(), map);
-    Gson gs = new Gson();
-    ResultDto resultDto = gs.fromJson(result, ResultDto.class);
-    if (resultDto.getData().equals(true)) {
-      return true;
-    }
-    return false;
-  }
-
-
-  public boolean symmetricVerify(String temail, String text, String encrypted) {
-    Map map = new HashMap();
-    map.put("temail", temail);
-    map.put("text", text);
-    map.put("encrypted", encrypted);
-    String result = post(kmsProperties.getUrlSymmetricVerify(), map);
-    Gson gs = new Gson();
-    ResultDto resultDto = gs.fromJson(result, ResultDto.class);
-    if (resultDto.getData().equals(true)) {
-      return true;
-    }
-    return false;
-  }
-
-
+  /**
+   * TODO [非对称]验证
+   */
   public boolean asymmetricVerify(String temail, String text, String signature) {
     Map map = new HashMap();
     map.put("temail", temail);
@@ -140,8 +109,10 @@ public class TSBService {
     return false;
   }
 
-
-  public String getAsymmetricKey(String temail, String text) {
+  /**
+   * TODO [非对称]公钥
+   */
+  public String getAsymmetricPubKey(String temail, String text) {
     Map map = new HashMap();
     map.put("temail", temail);
     map.put("text", text);
@@ -149,6 +120,20 @@ public class TSBService {
     Gson gs = new Gson();
     ResultDto resultDto = gs.fromJson(result, ResultDto.class);
     return resultDto.getData().toString();
+  }
+
+  /**
+   * TODO [非对称]加密
+   */
+  public String asymmetricEncrypt(String keyword, String text) {
+    return text;
+  }
+
+  /**
+   * TODO [非对称]解密
+   */
+  public String asymmetricDecrypt(String keyword, String encrypted) {
+    return encrypted;
   }
 
   private String post(String url, Map map) {

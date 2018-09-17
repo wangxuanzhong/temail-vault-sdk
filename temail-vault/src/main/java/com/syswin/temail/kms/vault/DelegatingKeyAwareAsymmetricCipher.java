@@ -60,8 +60,8 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   public CipherAlgorithm algorithm() {
     return cipher.algorithm();
   }
-
-  private KeyPair keyPair(String userId) {
+  @Override
+  public KeyPair keyPair(String userId) {
     KeyPair keyPair = userKeys.get(userId);
     if (keyPair == null) {
       throw new VaultCipherException("No such user registered: " + userId);
