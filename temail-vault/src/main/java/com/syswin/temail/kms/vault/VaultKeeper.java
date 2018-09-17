@@ -2,7 +2,6 @@ package com.syswin.temail.kms.vault;
 
 import static java.util.Arrays.asList;
 
-import java.security.KeyPair;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,5 +21,4 @@ public class VaultKeeper {
   public KeyAwareAsymmetricCipher asymmetricCipher(CipherAlgorithm algorithm) {
     return asymmetricCiphers.get(algorithm);
   }
-
 }

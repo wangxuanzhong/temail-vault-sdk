@@ -23,20 +23,9 @@ public class TestApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-//    System.out.println(itsbService);
-//    System.out.println(kmsProperties);
-//    String temail = "test@t.email";
-//    System.out.println(itsbService.generatePublicKey(temail));
-//    String text = "this is test text";
-//    String encrypt = itsbService.encrypt(temail, text);
-//    System.out.println(encrypt);
-//    System.out.println(itsbService.decrypt(temail, encrypt));
-//    String signature = itsbService.sign(temail, text);
-//    System.out.println(signature);
-//    System.out.println(itsbService.verify(temail, text, signature));
+
     //temail aes注册
-    String temail = "milk@t.email";
-    String text = "milk@t.email中国人";
+    String temail = "milk" + (System.currentTimeMillis()) + "@temail.com";
     String encrypted = itsbService.symmetricRegister(temail);
     System.out.println("symmetricRegister : " + encrypted);
     //获取密钥
@@ -46,9 +35,8 @@ public class TestApplication implements CommandLineRunner {
     String symmetricKey2 = itsbService.getSymmetricKey(temail);
     System.out.println("symmetricKey : " + symmetricKey2);
     Assert.assertEquals(symmetricKey1, symmetricKey2);
-//    //验证
-//    boolean verifyResult = itsbService.symmetricVerify(temail, text, encrypted);
-//    System.out.println("symmetricVerifyResult : " + verifyResult);
+
+    String text = "milk@t.email中国人";
     //加密
     String encryptedStr = itsbService.symmetricEncrypt(symmetricKey1, text);
     System.out.println("encryptedStr : " + encryptedStr);
@@ -56,21 +44,23 @@ public class TestApplication implements CommandLineRunner {
     String decryptedStr = itsbService.symmetricDecrypt(symmetricKey1, encryptedStr);
     System.out.println("decryptedStr : " + decryptedStr);
     Assert.assertEquals(text, decryptedStr);
-//
-//    //sdk ecc注册
-    String eccTemail = "";
+
+    String eccTemail = "ecctemail" + (System.currentTimeMillis()) + "@temail.com";
+    //sdk ecc注册
     String eccText = "this is a text";
-//    String signature = itsbService.asymmetricRegister(eccTemail, eccText);
-//    System.out.println("asymmetricRegister : " + signature);
-//    //验证
+    String signature = itsbService.asymmetricRegister(eccTemail);
+    System.out.println("asymmetricRegister : " + signature);
+    //验证
     boolean verifyResult1 = itsbService.asymmetricVerify(eccTemail, eccText);
     System.out.println("asymmetricVerifyResult : " + verifyResult1);
     boolean verifyResult2 = itsbService.asymmetricVerify(eccTemail, eccText);
     System.out.println("asymmetricVerifyResult : " + verifyResult2);
     Assert.assertEquals(verifyResult1, verifyResult2);
-//    //获取公私钥对
-//    String asymmetricKey = itsbService.getAsymmetricKey(eccTemail, eccText);
-//    System.out.println("asymmetricKey : " + asymmetricKey);
+    //获取公私钥对
+    String asymmetricKey = itsbService.getAsymmetricPubKey(eccTemail);
+    System.out.println("asymmetricKey : " + asymmetricKey);
+    Assert.assertEquals(signature, asymmetricKey);
+
 //    //签名
 //    String signatureStr = itsbService.sign(eccTemail, eccText);
 //    System.out.println("signatureStr : " + signatureStr);
