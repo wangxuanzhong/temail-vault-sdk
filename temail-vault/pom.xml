@@ -18,5 +18,12 @@
     <module>vault-jni</module>
     <module>vault-keeper</module>
   </modules>
-
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.25</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>
