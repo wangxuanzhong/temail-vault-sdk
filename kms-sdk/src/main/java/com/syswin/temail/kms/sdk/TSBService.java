@@ -26,7 +26,7 @@ public class TSBService {
   private RestTemplate restTemplate;
 
   /**
-   * 对称加密注册，返回秘钥
+   * [[对称]]加密注册，返回秘钥
    */
   public String symmetricRegister(String temail) {
     Map map = new HashMap();
@@ -38,9 +38,9 @@ public class TSBService {
   }
 
   /**
-   * 对称加密算法的秘钥KEY
+   * [[对称]]加密算法的秘钥KEY
    */
-  @Cacheable(value = "kms", key = "'SYMMETRIC_KEY_' + #temail")
+  @Cacheable(value = "kms", key = "'SYMMETRIC_KEY_' + #p0")
   public String getSymmetricKey(String temail) {
     Map map = new HashMap();
     map.put("text", temail);
@@ -53,7 +53,7 @@ public class TSBService {
   }
 
   /**
-   * 对称加密
+   * [[对称]]加密
    */
   public String symmetricEncrypt(String keyword, String text) {
     SymmetricCipher aesCipher = new AESCipher(keyword);
@@ -61,7 +61,7 @@ public class TSBService {
   }
 
   /**
-   * 对称解密
+   * [[对称]]解密
    */
   public String symmetricDecrypt(String keyword, String encrypted) {
     SymmetricCipher aesCipher = new AESCipher(keyword);
@@ -72,13 +72,16 @@ public class TSBService {
   /**
    * [非对称]加密注册，返回公钥
    */
+  @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_' + #p0")
   public String asymmetricRegister(String text) {
     Map map = new HashMap();
     map.put("text", text);
     String result = post(kmsProperties.getUrlAsymmetricRegister(), map);
     Gson gs = new Gson();
     ResultDto resultDto = gs.fromJson(result, ResultDto.class);
-    return resultDto.getData().toString();
+    String rs = resultDto.getData().toString();
+    LOGGER.debug("getSymmetricKey key={},rs={}", text, rs);
+    return rs;
   }
 
   /**
@@ -88,24 +91,19 @@ public class TSBService {
     Map map = new HashMap();
     map.put("temail", temail);
     map.put("text", text);
-    return post(kmsProperties.getUrlSign(), map);
+    return "";
   }
 
 
   /**
    * TODO [非对称]验证
    */
-  public boolean asymmetricVerify(String temail, String text, String signature) {
+  @Cacheable(value = "kms", key = "'ASYMMETRIC_VERIFY_' + #p0 + '_' + #p1")
+  public boolean asymmetricVerify(String temail, String signed) {
     Map map = new HashMap();
     map.put("temail", temail);
-    map.put("text", text);
-    map.put("signature", signature);
-    String result = post(kmsProperties.getUrlAsymmetricVerify(), map);
-    Gson gs = new Gson();
-    ResultDto resultDto = gs.fromJson(result, ResultDto.class);
-    if (resultDto.getData().equals(true)) {
-      return true;
-    }
+    map.put("text", signed);
+    LOGGER.debug("getSymmetricKey temail={},signed={}", temail, signed);
     return false;
   }
 
