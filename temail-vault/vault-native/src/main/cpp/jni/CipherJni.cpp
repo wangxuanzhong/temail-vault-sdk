@@ -23,7 +23,12 @@ JNIEXPORT jobject JNICALL Java_com_syswin_temail_vault_jni_CipherJni_generateKey
   jclass cls = env->FindClass(JAVA_KEY_PAIR_CLASS_NAME);
   jmethodID constructorId = env->GetMethodID(cls, "<init>", "([B[B)V");
 
-  jobject keyPair = env->NewObject(cls, constructorId, toBytes(env, "publicKey"), toBytes(env, "privateKey"));
+  jbyteArray publicKey = toBytes(env, "publicKey");
+  jbyteArray privateKey = toBytes(env, "privateKey");
+  jobject keyPair = env->NewObject(cls, constructorId, publicKey, privateKey);
+  env->DeleteLocalRef(publicKey);
+  env->DeleteLocalRef(privateKey);
+
   return keyPair;
 }
 
