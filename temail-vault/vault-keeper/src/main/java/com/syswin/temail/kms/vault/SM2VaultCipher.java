@@ -30,7 +30,7 @@ import org.bouncycastle.math.ec.ECPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class SM2VaultCipher implements AsymmetricCipher {
+class SM2VaultCipher {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -57,7 +57,7 @@ class SM2VaultCipher implements AsymmetricCipher {
     ecParamSpec = new ECParameterSpec(curve, g, N);
   }
 
-  @Override
+  
   public KeyPair getKeyPair() {
     ECKeyGenerationParameters keyGenParams = new ECKeyGenerationParameters(domainParams, new SecureRandom());
 
@@ -69,7 +69,7 @@ class SM2VaultCipher implements AsymmetricCipher {
     return new KeyPair(publicKey, privateKey);
   }
 
-  @Override
+  
   public byte[] encrypt(PublicKey publicKey, String plaintext) {
     try {
       ECPublicKeyParameters publicKeyParameters = publicKeyParams((BCECPublicKey) publicKey);
@@ -81,7 +81,7 @@ class SM2VaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public String decrypt(PrivateKey privateKey, byte[] encryptedBytes) {
     try {
       SM2Engine sm2Engine = new SM2Engine();
@@ -94,7 +94,7 @@ class SM2VaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public byte[] sign(PrivateKey privateKey, byte[] unsigned) {
     try {
       ECPrivateKeyParameters privateKeyParameters = privateKeyParameters((BCECPrivateKey) privateKey);
@@ -112,7 +112,7 @@ class SM2VaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed) {
     ECPublicKeyParameters publicKeyParameters = publicKeyParams((BCECPublicKey) publicKey);
     final SM2Signer signer = new SM2Signer();
@@ -121,7 +121,7 @@ class SM2VaultCipher implements AsymmetricCipher {
     return signer.verifySignature(signed);
   }
 
-  @Override
+  
   public CipherAlgorithm algorithm() {
     return SM2;
   }

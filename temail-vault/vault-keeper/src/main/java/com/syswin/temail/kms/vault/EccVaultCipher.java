@@ -17,7 +17,7 @@ import javax.crypto.Cipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EccVaultCipher implements AsymmetricCipher {
+public class EccVaultCipher  {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String EC = "EC";
@@ -34,7 +34,7 @@ public class EccVaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public KeyPair getKeyPair() {
     try {
       KeyPairGenerator keyGen = KeyPairGenerator.getInstance(EC);
@@ -46,7 +46,7 @@ public class EccVaultCipher implements AsymmetricCipher {
   }
 
   // TODO: 2018/9/13 copied from TAIP proxy project and test cases / refactoring is in order
-  @Override
+  
   public byte[] encrypt(PublicKey privateKey, String plaintext) {
 
     try {
@@ -58,7 +58,7 @@ public class EccVaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public String decrypt(PrivateKey shareKey, byte[] encryptedBytes) {
     try {
       Cipher c1 = Cipher.getInstance(ALGORITHM);
@@ -70,7 +70,7 @@ public class EccVaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public byte[] sign(PrivateKey privateKey, byte[] unsigned) {
     try {
       Signature signature = Signature.getInstance(SHA_256_WITH_ECDSA);
@@ -82,7 +82,7 @@ public class EccVaultCipher implements AsymmetricCipher {
     }
   }
 
-  @Override
+  
   public boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed) {
     try {
       signature.initVerify(publicKey);
@@ -94,7 +94,7 @@ public class EccVaultCipher implements AsymmetricCipher {
     return false;
   }
 
-  @Override
+  
   public CipherAlgorithm algorithm() {
     return CipherAlgorithm.ECDSA;
   }

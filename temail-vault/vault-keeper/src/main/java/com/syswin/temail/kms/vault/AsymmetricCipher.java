@@ -1,20 +1,17 @@
 package com.syswin.temail.kms.vault;
 
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 public interface AsymmetricCipher {
 
   KeyPair getKeyPair();
 
-  byte[] encrypt(PublicKey publicKey, String plaintext);
+  byte[] encrypt(byte[] publicKey, String plaintext);
 
-  String decrypt(PrivateKey privateKey, byte[] encryptedBytes);
+  String decrypt(byte[] privateKey, byte[] encryptedBytes);
 
-  byte[] sign(PrivateKey privateKey, byte[] unsigned);
+  byte[] sign(byte[] privateKey, byte[] unsigned);
 
-  boolean verify(PublicKey publicKey, byte[] unsigned, byte[] signed);
+  boolean verify(byte[] publicKey, byte[] unsigned, byte[] signed);
 
   CipherAlgorithm algorithm();
 }
