@@ -9,6 +9,4 @@ public interface KeyAwareAsymmetricCipher extends KeyAwareCipher {
   PublicKey register(String userId);
 
   Optional<PublicKey> publicKey(String userId);
-
-  KeyPair keyPair(String text);
 }
