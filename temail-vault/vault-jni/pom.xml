@@ -3,20 +3,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
+    <artifactId>temail-vault</artifactId>
     <groupId>com.syswin.temail</groupId>
-    <artifactId>temail-kms</artifactId>
     <version>1.0.0</version>
   </parent>
-
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>temail-vault</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>vault-jni</artifactId>
 
-  <modules>
-    <module>vault-native</module>
-    <module>vault-jni</module>
-    <module>vault-keeper</module>
-  </modules>
 
 </project>

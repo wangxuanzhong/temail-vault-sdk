@@ -8,17 +8,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class VaultKeeper {
 
-  private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> asymmetricCiphers = new ConcurrentHashMap<>();
+  private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> asymmetricCiphers;
 
   public VaultKeeper() {
     this(asList(new DelegatingKeyAwareAsymmetricCipher(new SM2VaultCipher())));
   }
 
   VaultKeeper(Collection<KeyAwareAsymmetricCipher> asymmetricCiphers) {
+    this.asymmetricCiphers = new ConcurrentHashMap<>();
     asymmetricCiphers.forEach(cipher -> this.asymmetricCiphers.put(cipher.algorithm(), cipher));
   }
 
   public KeyAwareAsymmetricCipher asymmetricCipher(CipherAlgorithm algorithm) {
     return asymmetricCiphers.get(algorithm);
   }
+
 }

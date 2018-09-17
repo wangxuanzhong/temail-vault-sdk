@@ -1,6 +1,5 @@
 package com.syswin.temail.kms.vault;
 
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Optional;
 
