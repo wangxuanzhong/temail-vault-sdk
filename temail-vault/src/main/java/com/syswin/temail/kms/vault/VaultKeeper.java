@@ -23,7 +23,4 @@ public class VaultKeeper {
     return asymmetricCiphers.get(algorithm);
   }
 
-  public KeyPair asymmetricKeyPair(CipherAlgorithm algorithm, String text) {
-    return asymmetricCiphers.get(algorithm).keyPair(text);
-  }
 }
