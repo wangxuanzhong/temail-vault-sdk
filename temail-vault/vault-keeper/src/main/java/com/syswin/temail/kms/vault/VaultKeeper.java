@@ -16,27 +16,27 @@ public class VaultKeeper {
     this(asList(new DelegatingKeyAwareAsymmetricCipher(new AsymmetricCipher() {
       @Override
       public KeyPair getKeyPair() {
-        return null;
+        return new KeyPair(new byte[0], new byte[0]);
       }
 
       @Override
       public byte[] encrypt(byte[] publicKey, String plaintext) {
-        return new byte[0];
+        return plaintext.getBytes();
       }
 
       @Override
       public String decrypt(byte[] privateKey, byte[] encryptedBytes) {
-        return null;
+        return new String(encryptedBytes);
       }
 
       @Override
       public byte[] sign(byte[] privateKey, String plaintext) {
-        return new byte[0];
+        return plaintext.getBytes();
       }
 
       @Override
       public boolean verify(byte[] publicKey, String plaintext, byte[] signature) {
-        return false;
+        return true;
       }
 
       @Override
