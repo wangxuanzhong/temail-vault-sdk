@@ -1,7 +1,9 @@
 package com.syswin.temail.kms.vault;
 
+import static com.seanyinx.github.unit.scaffolding.AssertUtils.expectFailing;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import org.junit.Test;
 
 public class NativeAsymmetricCipherTest {
@@ -20,6 +22,16 @@ public class NativeAsymmetricCipherTest {
     byte[] encrypted = cipher.encrypt(keyPair.getPublic(), "Sean");
 
     assertThat(new String(encrypted)).isEqualTo("hello Sean");
+  }
+
+  @Test
+  public void shouldFailEncryption() {
+    try {
+      cipher.encrypt("blah".getBytes(), "Sean");
+      expectFailing(VaultCipherException.class);
+    } catch (VaultCipherException e) {
+      assertThat(e).hasMessage("Failed to encrypt text");
+    }
   }
 
   @Test

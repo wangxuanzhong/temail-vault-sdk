@@ -5,15 +5,28 @@
 
 #include "com_syswin_temail_vault_jni_CipherJni.h"
 #include "fake_vault_cipher.h"
+#include "ecc_vault_cipher.h"
 
 #define JAVA_CIPHER_CLASS_NAME "com/syswin/temail/vault/jni/CipherJni"
 #define JAVA_KEY_PAIR_CLASS_NAME JAVA_CIPHER_CLASS_NAME "$KeyPair"
+#define JAVA_EX_CLASS_NAME "com/syswin/temail/kms/vault/exceptions/VaultCipherException"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 static vault::VaultCipher *gCipher;
+static JavaVM *gJvm;
+
+static jint throwCipherException(const char *message) {
+  JNIEnv *env;
+  if (gJvm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+   return -1;
+  }
+
+  jclass exClass = env->FindClass(JAVA_EX_CLASS_NAME);
+  return env->ThrowNew(exClass, message);
+}
 
 static jbyteArray toBytes(JNIEnv *env, const std::string& buffer) {
   jbyteArray bytes = env->NewByteArray(buffer.size());
@@ -66,7 +79,7 @@ JNIEXPORT jobject JNICALL Java_com_syswin_temail_vault_jni_CipherJni_generateKey
   (JNIEnv *env, jobject obj) {
   std::string sPublicKey;
   std::string sPrivateKey;
-  gCipher->generateKeyPair(sPublicKey, sPrivateKey);
+  gCipher->generateKeyPair(sPublicKey, sPrivateKey, throwCipherException);
   
   jclass cls = env->FindClass(JAVA_KEY_PAIR_CLASS_NAME);
   jmethodID constructorId = env->GetMethodID(cls, "<init>", "([B[B)V");
@@ -84,7 +97,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_encrypt
   (JNIEnv *env, jobject obj, jbyteArray publicKey, jstring plaintext) {
   char* key = toString(env, publicKey);
   vault::ByteBuffer encrypted;
-  gCipher->encrypt(key, toVector(env, plaintext), encrypted);
+  gCipher->encrypt(key, toVector(env, plaintext), encrypted, throwCipherException);
   delete[] key;
   return fromVector(env, encrypted);
 }
@@ -93,7 +106,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_decrypt
   (JNIEnv *env, jobject obj, jbyteArray privateKey, jbyteArray encrypted) {
   char* key = toString(env, privateKey);
   vault::ByteBuffer plaintext;
-  gCipher->decrypt(key, bytesToVector(env, encrypted), plaintext);
+  gCipher->decrypt(key, bytesToVector(env, encrypted), plaintext, throwCipherException);
   delete[] key;
   return fromVector(env, plaintext);
 }
@@ -102,7 +115,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_sign
   (JNIEnv *env, jobject obj, jbyteArray privateKey, jstring plaintext) {
   char* key = toString(env, privateKey);
   vault::ByteBuffer signature;
-  gCipher->sign(key, toVector(env, plaintext), signature);
+  gCipher->sign(key, toVector(env, plaintext), signature, throwCipherException);
   delete[] key;
   return fromVector(env, signature);
 }
@@ -110,17 +123,20 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_sign
 JNIEXPORT jboolean JNICALL Java_com_syswin_temail_vault_jni_CipherJni_verify
   (JNIEnv *env, jobject obj, jbyteArray publicKey, jstring plaintext, jbyteArray signature) {
   char* key = toString(env, publicKey);
-  bool verified = gCipher->verify(key, toVector(env, plaintext), bytesToVector(env, signature));
+  bool verified = gCipher->verify(key, toVector(env, plaintext), bytesToVector(env, signature), throwCipherException);
+  delete[] key;
   return (jboolean) verified;
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
+  gJvm = jvm;
   gCipher = new vault::FakeVaultCipher();
   return JNI_VERSION_1_6;
 }
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
   gCipher = nullptr;
+  gJvm = nullptr;
 }
 
 #ifdef __cplusplus

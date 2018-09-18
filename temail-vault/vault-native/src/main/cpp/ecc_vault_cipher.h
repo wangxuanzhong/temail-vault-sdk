@@ -1,12 +1,12 @@
-#ifndef FAKE_VAULT_CIPHER_H
-#define FAKE_VAULT_CIPHER_H
+#ifndef ECC_VAULT_CIPHER_H
+#define ECC_VAULT_CIPHER_H
 
 #include <string>
 #include "vault_cipher.h"
 
 namespace vault {
 
-  class FakeVaultCipher : public VaultCipher {
+  class EccVaultCipher : public VaultCipher {
   public:
     void generateKeyPair(std::string &publicKey, std::string &privateKey, ErrorHandler handler);
 
@@ -18,8 +18,8 @@ namespace vault {
 
     void decrypt(const char * privateKey, const ByteBuffer &encrypted, ByteBuffer &plaintext, ErrorHandler handler);
 
-    FakeVaultCipher() {};
-    ~FakeVaultCipher() {};
+    EccVaultCipher() {};
+    ~EccVaultCipher() {};
   };
 }
 

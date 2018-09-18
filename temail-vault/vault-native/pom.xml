@@ -37,6 +37,7 @@
               <directory>${basedir}/src/main/cpp/</directory>
               <fileNames>
                 <fileName>fake_vault_cipher.cpp</fileName>
+                <!--<fileName>ecc_vault_cipher.cpp</fileName>-->
               </fileNames>
             </source>
           </sources>
@@ -59,7 +60,7 @@
           <linkerEndOptions>
             <linkerEndOption>-shared</linkerEndOption>
             <linkerEndOption>-fPIC</linkerEndOption>
-            <!--<linkerEndOption>-lExample</linkerEndOption>-->
+            <!--<linkerEndOption>-lecc</linkerEndOption>-->
           </linkerEndOptions>
         </configuration>
       </plugin>
