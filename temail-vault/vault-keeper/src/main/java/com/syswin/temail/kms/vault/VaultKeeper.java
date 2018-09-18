@@ -13,38 +13,7 @@ public class VaultKeeper {
   private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> asymmetricCiphers;
 
   public VaultKeeper(ICache iCache) {
-//    this(asList(new DelegatingKeyAwareAsymmetricCipher(new SM2VaultCipher())));
-    this(asList(new DelegatingKeyAwareAsymmetricCipher(new AsymmetricCipher() {
-      @Override
-      public KeyPair getKeyPair() {
-        return new KeyPair(new byte[0], new byte[0]);
-      }
-
-      @Override
-      public byte[] encrypt(byte[] publicKey, String plaintext) {
-        return plaintext.getBytes();
-      }
-
-      @Override
-      public String decrypt(byte[] privateKey, byte[] encryptedBytes) {
-        return new String(encryptedBytes);
-      }
-
-      @Override
-      public byte[] sign(byte[] privateKey, String plaintext) {
-        return plaintext.getBytes();
-      }
-
-      @Override
-      public boolean verify(byte[] publicKey, String plaintext, byte[] signature) {
-        return true;
-      }
-
-      @Override
-      public CipherAlgorithm algorithm() {
-        return CipherAlgorithm.SM2;
-      }
-    }, iCache)));
+    this(asList(new DelegatingKeyAwareAsymmetricCipher(new NativeAsymmetricCipher(), iCache)));
   }
 
   public VaultKeeper() {
