@@ -2,6 +2,7 @@
 #define ECC_VAULT_CIPHER_H
 
 #include <string>
+#include <map>
 #include "vault_cipher.h"
 
 namespace vault {
@@ -18,8 +19,11 @@ namespace vault {
 
     void decrypt(const char * privateKey, const ByteBuffer &encrypted, ByteBuffer &plaintext, ErrorHandler handler);
 
-    EccVaultCipher() {};
+    EccVaultCipher();
     ~EccVaultCipher() {};
+
+  private:
+    std::map<int, const char*> errorMessages;
   };
 }
 
