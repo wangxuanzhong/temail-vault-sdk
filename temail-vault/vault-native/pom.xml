@@ -36,7 +36,7 @@
             <source>
               <directory>${basedir}/src/main/cpp/</directory>
               <fileNames>
-                <fileName>hello.cpp</fileName>
+                <fileName>fake_vault_cipher.cpp</fileName>
               </fileNames>
             </source>
           </sources>
