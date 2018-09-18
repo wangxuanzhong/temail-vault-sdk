@@ -30,12 +30,12 @@ public class VaultKeeper {
       }
 
       @Override
-      public byte[] sign(byte[] privateKey, byte[] unsigned) {
+      public byte[] sign(byte[] privateKey, String plaintext) {
         return new byte[0];
       }
 
       @Override
-      public boolean verify(byte[] publicKey, byte[] unsigned, byte[] signed) {
+      public boolean verify(byte[] publicKey, String plaintext, byte[] signature) {
         return false;
       }
 

@@ -41,13 +41,13 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   @Override
-  public byte[] sign(String userId, byte[] unsigned) {
-    return cipher.sign(keyPair(userId).getPrivate(), unsigned);
+  public byte[] sign(String userId, String plaintext) {
+    return cipher.sign(keyPair(userId).getPrivate(), plaintext);
   }
 
   @Override
-  public boolean verify(String userId, byte[] unsigned, byte[] signed) {
-    return cipher.verify(keyPair(userId).getPublic(), unsigned, signed);
+  public boolean verify(String userId, String plaintext, byte[] signed) {
+    return cipher.verify(keyPair(userId).getPublic(), plaintext, signed);
   }
 
   @Override

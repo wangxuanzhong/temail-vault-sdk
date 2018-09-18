@@ -56,24 +56,24 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   @Test
   public void signWithKeyOfRegisteredUser() throws Exception {
     when(vaultCipher.getKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
-    when(vaultCipher.sign(privateKey, encrypted)).thenReturn(signature);
+    when(vaultCipher.sign(privateKey, plaintext)).thenReturn(signature);
 
     byte[] publicKey = keyAwareCipher.register(userId);
     assertThat(publicKey).isEqualTo(this.publicKey);
 
-    byte[] signature = keyAwareCipher.sign(userId, encrypted);
+    byte[] signature = keyAwareCipher.sign(userId, plaintext);
     assertThat(signature).isEqualTo(this.signature);
   }
 
   @Test
   public void verifyWithKeyOfRegisteredUser() {
     when(vaultCipher.getKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
-    when(vaultCipher.verify(publicKey, plaintext.getBytes(), signature)).thenReturn(true);
+    when(vaultCipher.verify(publicKey, plaintext, signature)).thenReturn(true);
 
     byte[] publicKey = keyAwareCipher.register(userId);
     assertThat(publicKey).isEqualTo(this.publicKey);
 
-    boolean verified = keyAwareCipher.verify(userId, plaintext.getBytes(), signature);
+    boolean verified = keyAwareCipher.verify(userId, plaintext, signature);
     assertThat(verified).isTrue();
   }
 

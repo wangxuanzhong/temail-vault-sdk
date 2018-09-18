@@ -9,9 +9,9 @@ public interface AsymmetricCipher {
 
   String decrypt(byte[] privateKey, byte[] encryptedBytes);
 
-  byte[] sign(byte[] privateKey, byte[] unsigned);
+  byte[] sign(byte[] privateKey, String plaintext);
 
-  boolean verify(byte[] publicKey, byte[] unsigned, byte[] signed);
+  boolean verify(byte[] publicKey, String plaintext, byte[] signature);
 
   CipherAlgorithm algorithm();
 }

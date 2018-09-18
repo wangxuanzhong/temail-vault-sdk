@@ -6,9 +6,9 @@ public interface KeyAwareCipher {
 
   String decrypt(String userId, byte[] encryptedBytes);
 
-  byte[] sign(String userId, byte[] unsigned);
+  byte[] sign(String userId, String plaintext);
 
-  boolean verify(String userId, byte[] unsigned, byte[] signed);
+  boolean verify(String userId, String plaintext, byte[] signed);
 
   void revoke(String userId);
 
