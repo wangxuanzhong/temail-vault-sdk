@@ -3,6 +3,7 @@ package com.syswin.temail.kms.vault;
 import static java.util.Arrays.asList;
 
 import com.syswin.temail.kms.vault.cache.DefaultCache;
+import com.syswin.temail.kms.vault.cache.ICache;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +12,7 @@ public class VaultKeeper {
 
   private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> asymmetricCiphers;
 
-  public VaultKeeper() {
+  public VaultKeeper(ICache iCache) {
 //    this(asList(new DelegatingKeyAwareAsymmetricCipher(new SM2VaultCipher())));
     this(asList(new DelegatingKeyAwareAsymmetricCipher(new AsymmetricCipher() {
       @Override
@@ -43,7 +44,11 @@ public class VaultKeeper {
       public CipherAlgorithm algorithm() {
         return CipherAlgorithm.SM2;
       }
-    }, new DefaultCache())));
+    }, iCache)));
+  }
+
+  public VaultKeeper() {
+    this(new DefaultCache());
   }
 
   VaultKeeper(Collection<KeyAwareAsymmetricCipher> asymmetricCiphers) {

@@ -73,13 +73,6 @@ class CipherService {
   }
 
 
-  /**
-   * [非对称]加密注册，返回公钥
-   */
-  public String asymmetricRegister(String temail) {
-    return getAsymmetricKeypair(temail).getPublicKey();
-  }
-
   @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_PAIR' + #p0")
   public AsymmetricDto getAsymmetricKeypair(String temail) {
     Map map = new HashMap();
@@ -87,18 +80,6 @@ class CipherService {
     String result = post(kmsProperties.getUrlAsymmetricRegister(), map);
     AsymmetricDto dto = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), AsymmetricDto.class);
     return dto;
-  }
-
-  /**
-   * TODO [非对称]公钥
-   */
-  @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_' + #p0")
-  public String getAsymmetricPubKey(String temail) {
-    Map map = new HashMap();
-    map.put("text", temail);
-    String result = post(kmsProperties.getUrlAsymmetricKey(), map);
-    AsymmetricDto dto = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), AsymmetricDto.class);
-    return dto.getPublicKey();
   }
 
   /**
@@ -112,7 +93,6 @@ class CipherService {
   /**
    * TODO [非对称]验证
    */
-  @Cacheable(value = "kms", key = "'ASYMMETRIC_VERIFY_' + #p0 + '_' + #p1+ '_' + #p2")
   public boolean asymmetricVerify(String temail, String signed, String unsigned) {
     byte[] sign = decoder(signed);
     LOGGER.debug("getSymmetricKey temail={},signed={},unsigned={}", temail, signed, unsigned);
