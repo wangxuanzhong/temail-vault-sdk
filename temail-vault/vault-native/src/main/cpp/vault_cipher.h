@@ -1,6 +1,7 @@
 #ifndef VAULT_CIPHER_H
 #define VAULT_CIPHER_H
 
+#include <vector>
 #include <string>
 #include <functional>
 

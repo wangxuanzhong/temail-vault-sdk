@@ -1,4 +1,5 @@
 #include "fake_vault_cipher.h"
+#include "string.h"
 #include <vector>
 #include <algorithm>
 #include <string>
