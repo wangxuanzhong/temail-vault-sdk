@@ -11,6 +11,13 @@
 
   <artifactId>vault-jni</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.syswin.temail</groupId>
+      <artifactId>vault-native</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
