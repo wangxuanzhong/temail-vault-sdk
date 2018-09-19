@@ -4,8 +4,10 @@ import static com.seanyinx.github.unit.scaffolding.AssertUtils.expectFailing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class NativeAsymmetricCipherTest {
 
   private final NativeAsymmetricCipher cipher = new NativeAsymmetricCipher();
