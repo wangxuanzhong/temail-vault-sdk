@@ -36,8 +36,12 @@ static jbyteArray toBytes(JNIEnv *env, const std::string& buffer) {
 
 static char* toString(JNIEnv *env, const jbyteArray& array) {
   int len = env->GetArrayLength (array);
-  char* buf = new char[len];
-  env->GetByteArrayRegion (array, 0, len, reinterpret_cast<jbyte*>(buf));
+  char* buf = (char*) calloc(sizeof(char), len + 1);
+
+  jbyte* jbytes = env->GetByteArrayElements(array, NULL);
+  memcpy(buf, jbytes, len);
+
+  env->ReleaseByteArrayElements(array, jbytes, JNI_ABORT);
   return buf;
 }
 
@@ -72,6 +76,7 @@ static jbyteArray fromVector(JNIEnv *env, const vault::ByteBuffer& buffer) {
   }
 
   env->SetByteArrayRegion(array, 0, buffer.size(), bytes);
+  delete[] bytes;
   return array;
 }
 
@@ -98,7 +103,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_encrypt
   char* key = toString(env, publicKey);
   vault::ByteBuffer encrypted;
   gCipher->encrypt(key, toVector(env, plaintext), encrypted, throwCipherException);
-  delete[] key;
+  free(key);
   return fromVector(env, encrypted);
 }
 
@@ -107,7 +112,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_decrypt
   char* key = toString(env, privateKey);
   vault::ByteBuffer plaintext;
   gCipher->decrypt(key, bytesToVector(env, encrypted), plaintext, throwCipherException);
-  delete[] key;
+  free(key);
   return fromVector(env, plaintext);
 }
 
@@ -116,7 +121,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_syswin_temail_vault_jni_CipherJni_sign
   char* key = toString(env, privateKey);
   vault::ByteBuffer signature;
   gCipher->sign(key, toVector(env, plaintext), signature, throwCipherException);
-  delete[] key;
+  free(key);
   return fromVector(env, signature);
 }
 
@@ -124,7 +129,7 @@ JNIEXPORT jboolean JNICALL Java_com_syswin_temail_vault_jni_CipherJni_verify
   (JNIEnv *env, jobject obj, jbyteArray publicKey, jstring plaintext, jbyteArray signature) {
   char* key = toString(env, publicKey);
   bool verified = gCipher->verify(key, toVector(env, plaintext), bytesToVector(env, signature), throwCipherException);
-  delete[] key;
+  free(key);
   return (jboolean) verified;
 }
 
@@ -135,6 +140,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
 }
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
+  delete gCipher;
   gCipher = nullptr;
   gJvm = nullptr;
 }

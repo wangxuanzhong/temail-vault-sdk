@@ -28,7 +28,10 @@ void EccVaultCipher::sign(const char * privateKey, const ByteBuffer &plaintext, 
 }
 
 bool EccVaultCipher::verify(const char * publicKey, const ByteBuffer &plaintext, const ByteBuffer &signature, ErrorHandler handler) {
-  return ecc_verify(publicKey, plaintext, signature) == ERR_SUCCESS;
+  int ret = ecc_verify(publicKey, plaintext, signature);
+  if (ret != ERR_SUCCESS)
+      handler(errorMessages[ret]);
+  return ret == ERR_SUCCESS;
 }
 
 void EccVaultCipher::encrypt(const char * publicKey, const ByteBuffer &plaintext, ByteBuffer &encrypted, ErrorHandler handler) {
