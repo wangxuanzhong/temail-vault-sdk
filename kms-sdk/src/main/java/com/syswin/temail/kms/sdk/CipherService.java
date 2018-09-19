@@ -123,7 +123,7 @@ class CipherService {
     return Base64.getEncoder().encodeToString(bytes);
   }
 
-  private String post(String url, Map map) {
+  String post(String url, Map map) {
     try {
       Gson gs = new Gson();
       String s = gs.toJson(map);
