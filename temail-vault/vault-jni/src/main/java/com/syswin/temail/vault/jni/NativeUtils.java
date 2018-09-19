@@ -43,7 +43,7 @@ class NativeUtils {
    * The minimum length a prefix for a file has to have according to {@link File#createTempFile(String, String)}}.
    */
   private static final int MIN_PREFIX_LENGTH = 3;
-  private static final String NATIVE_FOLDER_PATH_PREFIX = "vaultJni";
+  private static final String KEY_NATIVE_DIR = "temail.vault.native.workdir";
 
   /**
    * Temporary directory which will contain the DLLs.
@@ -86,8 +86,7 @@ class NativeUtils {
 
     // Prepare temporary file
     if (temporaryDir == null) {
-      temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);
-      temporaryDir.deleteOnExit();
+      temporaryDir = createTempDirectory();
     }
 
     File temp = new File(temporaryDir, filename);
@@ -105,33 +104,15 @@ class NativeUtils {
     try {
       System.load(temp.getAbsolutePath());
     } finally {
-      if (isPosixCompliant()) {
-        // Assume POSIX compliant file system, can be deleted after loading
-        temp.delete();
-      } else {
-        // Assume non-POSIX, and don't delete until last file descriptor closed
-        temp.deleteOnExit();
-      }
+      temp.deleteOnExit();
     }
   }
 
-  private static boolean isPosixCompliant() {
-    try {
-      return FileSystems.getDefault()
-          .supportedFileAttributeViews()
-          .contains("posix");
-    } catch (FileSystemNotFoundException
-        | ProviderNotFoundException
-        | SecurityException e) {
-      return false;
-    }
-  }
+  private static File createTempDirectory() throws IOException {
+    String tempDir = System.getProperty(KEY_NATIVE_DIR);
+    File generatedDir = new File(tempDir);
 
-  private static File createTempDirectory(String prefix) throws IOException {
-    String tempDir = System.getProperty("java.io.tmpdir");
-    File generatedDir = new File(tempDir, prefix + System.nanoTime());
-
-    if (!generatedDir.mkdir()) {
+    if (!generatedDir.mkdirs() && !generatedDir.exists()) {
       throw new IOException("Failed to create temp directory " + generatedDir.getName());
     }
 
