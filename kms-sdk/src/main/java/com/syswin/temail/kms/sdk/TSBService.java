@@ -40,14 +40,14 @@ public class TSBService {
    * [[对称]]加密
    */
   public String symmetricEncrypt(String keyword, String text) {
-    return cipherService.symmetricEncrypt(keyword, text);
+    return encoder(cipherService.symmetricEncrypt(keyword, text));
   }
 
   /**
    * [[对称]]解密
    */
   public String symmetricDecrypt(String keyword, String encrypted) {
-    return cipherService.symmetricDecrypt(keyword, encrypted);
+    return cipherService.symmetricDecrypt(keyword, decoder(encrypted));
   }
 
 //-----------------------------------------------------------------

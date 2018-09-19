@@ -59,7 +59,7 @@ class CipherService {
   /**
    * [[对称]]加密
    */
-  public String symmetricEncrypt(String keyword, String text) {
+  public byte[] symmetricEncrypt(String keyword, String text) {
     SymmetricCipher aesCipher = new AESCipher(keyword);
     return aesCipher.encrypt(text);
   }
@@ -67,7 +67,7 @@ class CipherService {
   /**
    * [[对称]]解密
    */
-  public String symmetricDecrypt(String keyword, String encrypted) {
+  public String symmetricDecrypt(String keyword, byte[] encrypted) {
     SymmetricCipher aesCipher = new AESCipher(keyword);
     return aesCipher.decrypt(encrypted);
   }
