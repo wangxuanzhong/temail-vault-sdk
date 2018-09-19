@@ -135,7 +135,7 @@ JNIEXPORT jboolean JNICALL Java_com_syswin_temail_vault_jni_CipherJni_verify
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
   gJvm = jvm;
-  gCipher = new vault::FakeVaultCipher();
+  gCipher = new vault::EccVaultCipher();
   return JNI_VERSION_1_6;
 }
 

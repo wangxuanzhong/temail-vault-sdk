@@ -5,8 +5,8 @@ import java.io.IOException;
 public class CipherJni {
 
   static {
-//    System.loadLibrary("ecc");
     try {
+      NativeUtils.loadLibraryFromJar("/libecc.so");
       NativeUtils.loadLibraryFromJar("/native/libVault.so");
     } catch (IOException e) {
       throw new IllegalStateException("Failed to load native library", e);
