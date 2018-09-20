@@ -1,6 +1,6 @@
 package com.syswin.temail.kms.vault;
 
-import static com.syswin.temail.kms.vault.CipherAlgorithm.SM2;
+import static com.syswin.temail.kms.vault.CipherAlgorithm.ECDSA;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.syswin.temail.vault.jni.CipherJni;
@@ -50,6 +50,6 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
 
   @Override
   public CipherAlgorithm algorithm() {
-    return SM2;
+    return ECDSA;
   }
 }
