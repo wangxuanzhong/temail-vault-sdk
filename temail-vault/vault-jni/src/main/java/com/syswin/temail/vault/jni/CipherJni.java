@@ -6,7 +6,7 @@ public class CipherJni {
 
   static {
     try {
-      NativeUtils.loadLibraryFromJar("/libecc.so");
+      NativeUtils.loadLibraryFromJar("/libecc.dylib");
       NativeUtils.loadLibraryFromJar("/native/libVault.so");
     } catch (IOException e) {
       throw new IllegalStateException("Failed to load native library", e);
