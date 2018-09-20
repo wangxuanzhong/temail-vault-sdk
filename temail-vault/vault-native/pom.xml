@@ -62,6 +62,9 @@
             <linkerEndOption>-lstdc++</linkerEndOption>
             <linkerEndOption>-ldl</linkerEndOption>
             <linkerEndOption>-lecc</linkerEndOption>
+            <linkerEndOption>-luuid</linkerEndOption>
+            <linkerEndOption>-lssl</linkerEndOption>
+            <linkerEndOption>-lcrypto</linkerEndOption>
           </linkerEndOptions>
         </configuration>
       </plugin>

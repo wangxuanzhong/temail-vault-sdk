@@ -23,11 +23,11 @@
  */
 package com.syswin.temail.vault.jni;
 
-import java.io.*;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.ProviderNotFoundException;
 import java.nio.file.StandardCopyOption;
 
 /**
@@ -43,34 +43,18 @@ class NativeUtils {
    * The minimum length a prefix for a file has to have according to {@link File#createTempFile(String, String)}}.
    */
   private static final int MIN_PREFIX_LENGTH = 3;
-  private static final String KEY_NATIVE_DIR = "temail.vault.native.workdir";
 
   /**
    * Temporary directory which will contain the DLLs.
    */
-  private static File temporaryDir;
+  private final File temporaryDir;
 
-  /**
-   * Private constructor - this class will never be instanced
-   */
-  private NativeUtils() {
+  NativeUtils(String nativePathPrefix) throws IOException {
+    temporaryDir = createTempDirectory(nativePathPrefix);
+    temporaryDir.deleteOnExit();
   }
 
-  /**
-   * Loads library from current JAR archive
-   *
-   * The file from JAR is copied into system temporary directory and then loaded. The temporary file is deleted after exiting. Method uses String as
-   * filename because the pathname is "abstract", not system-dependent.
-   *
-   * @param path The path of file inside JAR as absolute path (beginning with '/'), e.g. /package/File.ext
-   * @throws IOException If temporary file creation or read/write operation fails
-   * @throws IllegalArgumentException If source file (param path) does not exist
-   * @throws IllegalArgumentException If the path is not absolute or if the filename is shorter than three characters (restriction of {@link
-   * File#createTempFile(java.lang.String, java.lang.String)}).
-   * @throws FileNotFoundException If the file could not be found inside the JAR.
-   */
-  static void loadLibraryFromJar(String path) throws IOException {
-
+  File extractLibraryFromJar(String path) throws IOException {
     if (null == path || !path.startsWith("/")) {
       throw new IllegalArgumentException("The path has to be absolute (start with '/').");
     }
@@ -84,11 +68,6 @@ class NativeUtils {
       throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
     }
 
-    // Prepare temporary file
-    if (temporaryDir == null) {
-      temporaryDir = createTempDirectory();
-    }
-
     File temp = new File(temporaryDir, filename);
 
     try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
@@ -99,18 +78,35 @@ class NativeUtils {
     } catch (NullPointerException e) {
       temp.delete();
       throw new FileNotFoundException("File " + path + " was not found inside JAR.");
-    }
-
-    try {
-      System.load(temp.getAbsolutePath());
     } finally {
       temp.deleteOnExit();
     }
+    return temp;
   }
 
-  private static File createTempDirectory() throws IOException {
-    String tempDir = System.getProperty(KEY_NATIVE_DIR);
-    File generatedDir = new File(tempDir);
+  /**
+   * Loads library from current JAR archive
+   *
+   * The file from JAR is copied into system temporary directory and then loaded. The temporary file is deleted after exiting. Method uses String as
+   * filename because the pathname is "abstract", not system-dependent.
+   *
+   * @param path The path of file inside JAR as absolute path (beginning with '/'), e.g. /package/File.ext
+   * @throws IOException If temporary file creation or read/write operation fails
+   * @throws IllegalArgumentException If source file (param path) does not exist
+   * @throws IllegalArgumentException If the path is not absolute or if the filename is shorter than three characters (restriction of {@link
+   * File#createTempFile(String, String)}).
+   * @throws FileNotFoundException If the file could not be found inside the JAR.
+   */
+  void loadLibraryFromJar(String path) throws IOException {
+
+    File temp = extractLibraryFromJar(path);
+
+    System.load(temp.getAbsolutePath());
+  }
+
+  private File createTempDirectory(String prefix) throws IOException {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    File generatedDir = new File(tempDir, prefix + System.nanoTime());
 
     if (!generatedDir.mkdirs() && !generatedDir.exists()) {
       throw new IOException("Failed to create temp directory " + generatedDir.getName());
