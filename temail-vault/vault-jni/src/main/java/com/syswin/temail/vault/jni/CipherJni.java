@@ -5,14 +5,24 @@ import java.io.IOException;
 public class CipherJni {
 
   static {
+
     try {
-      final NativeUtils nativeUtils = new NativeUtils("vault");
-      nativeUtils.extractLibraryFromJar("/libecc.a");
-      nativeUtils.extractLibraryFromJar("/libcrypto.a");
-      nativeUtils.extractLibraryFromJar("/libssl.a");
-      nativeUtils.loadLibraryFromJar("/native/libVault.so");
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to load native library", e);
+      try {
+        final NativeUtils nativeUtils = new NativeUtils("vault");
+        nativeUtils.extractLibraryFromJar("/libecc.a");
+        nativeUtils.extractLibraryFromJar("/libcrypto.a");
+        nativeUtils.extractLibraryFromJar("/libssl.a");
+        nativeUtils.loadLibraryFromJar("/native/libVault.so");
+      } catch (IOException e) {
+        throw new IllegalStateException("Failed to load native library", e);
+      }
+    } catch (Error e) {
+      // TODO 兼容windows版本开发使用
+      if (System.getProperty("os.name").contains("Windows")) {
+        e.printStackTrace();
+      } else {
+        throw e;
+      }
     }
   }
 
