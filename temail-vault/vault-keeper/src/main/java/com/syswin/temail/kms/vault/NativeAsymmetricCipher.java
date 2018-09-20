@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.syswin.temail.vault.jni.CipherJni;
 import java.lang.invoke.MethodHandles;
+import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +26,13 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
 
   @Override
   public byte[] encrypt(byte[] publicKey, String plaintext) {
-    return cipher.encrypt(publicKey, plaintext);
+    // TODO: 2018/9/20 all others are base64 encoded by C++ except encrypted bytes
+    return Base64.getEncoder().encode(cipher.encrypt(publicKey, plaintext));
   }
 
   @Override
   public String decrypt(byte[] privateKey, byte[] encryptedBytes) {
-    return new String(cipher.decrypt(privateKey, encryptedBytes), UTF_8);
+    return new String(cipher.decrypt(privateKey, Base64.getDecoder().decode(encryptedBytes)), UTF_8);
   }
 
   @Override
