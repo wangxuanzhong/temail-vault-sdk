@@ -4,7 +4,7 @@ public class Response {
 
   private Integer code;
   private String message;
-  private KeyPair keyPair;
+  private KeyPair data;
 
   Response() {
   }
@@ -12,7 +12,7 @@ public class Response {
   public Response(Integer code, String message, KeyPair keyPair) {
     this.code = code;
     this.message = message;
-    this.keyPair = keyPair;
+    this.data = keyPair;
   }
 
   public Integer getCode() {
@@ -24,6 +24,6 @@ public class Response {
   }
 
   public KeyPair getKeyPair() {
-    return keyPair;
+    return data;
   }
 }

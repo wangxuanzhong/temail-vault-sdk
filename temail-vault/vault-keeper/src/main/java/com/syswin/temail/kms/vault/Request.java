@@ -4,11 +4,12 @@ import java.util.Objects;
 
 public class Request {
 
-  private final String userId;
+  // TODO: 2018/9/21 weird naming
+  private final String text;
   private final String algorithm;
 
   public Request(String userId, CipherAlgorithm algorithm) {
-    this.userId = userId;
+    this.text = userId;
     this.algorithm = algorithm.name();
   }
 
@@ -21,12 +22,12 @@ public class Request {
       return false;
     }
     Request request = (Request) o;
-    return Objects.equals(userId, request.userId) &&
+    return Objects.equals(text, request.text) &&
         Objects.equals(algorithm, request.algorithm);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, algorithm);
+    return Objects.hash(text, algorithm);
   }
 }

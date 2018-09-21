@@ -1,29 +1,27 @@
 package com.syswin.temail.kms.vault;
 
-import com.syswin.temail.kms.vault.cache.ICache;
 import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import java.util.Optional;
 
 public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCipher {
 
   private final AsymmetricCipher cipher;
-  private final ICache cache;
+  private final KeyRegistry keyRegistry;
 
-  DelegatingKeyAwareAsymmetricCipher(AsymmetricCipher cipher, ICache cache) {
+  DelegatingKeyAwareAsymmetricCipher(AsymmetricCipher cipher, KeyRegistry keyRegistry) {
     this.cipher = cipher;
-    this.cache = cache;
+    this.keyRegistry = keyRegistry;
   }
 
   @Override
   public byte[] register(String userId) {
-    KeyPair keyPair = cipher.getKeyPair();
-    cache.put(userId, keyPair);
+    KeyPair keyPair = keyRegistry.register(userId);
     return keyPair.getPublic();
   }
 
   @Override
   public Optional<byte[]> publicKey(String userId) {
-    KeyPair keyPair = cache.get(userId);
+    KeyPair keyPair = keyRegistry.retrieve(userId);
     if (keyPair == null) {
       return Optional.empty();
     }
@@ -52,7 +50,7 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
 
   @Override
   public void revoke(String userId) {
-    cache.remove(userId);
+    keyRegistry.remove(userId);
   }
 
   @Override
@@ -61,7 +59,7 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   private KeyPair keyPair(String userId) {
-    KeyPair keyPair = cache.get(userId);
+    KeyPair keyPair = keyRegistry.retrieve(userId);
     if (keyPair == null) {
       throw new VaultCipherException("No such user registered: " + userId);
     }
