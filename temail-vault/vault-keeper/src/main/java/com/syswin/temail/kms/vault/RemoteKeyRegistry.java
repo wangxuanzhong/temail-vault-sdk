@@ -22,9 +22,7 @@ class RemoteKeyRegistry implements KeyRegistry {
   public KeyPair register(String tenantId, String key) {
     Response response = restClient.post(PATH_REGISTRATION, new Request(tenantId, key, algorithm), Response.class);
 
-    if (response.getCode() != 200) {
-      throw new VaultCipherException("Failed to generate key pair, error message is: " + response.getMessage());
-    }
+    validateResponse(response);
 
     KeyPair keyPair = response.getKeyPair();
     cache.put(key, keyPair);
@@ -38,9 +36,7 @@ class RemoteKeyRegistry implements KeyRegistry {
     if (keyPair == null) {
       Response response = restClient.post(PATH_RETRIEVE, new Request(tenantId, key, algorithm), Response.class);
 
-      if (response.getCode() != 200) {
-        throw new VaultCipherException("Failed to generate key pair, error message is: " + response.getMessage());
-      }
+      validateResponse(response);
 
       keyPair = response.getKeyPair();
       cache.put(key, keyPair);
@@ -51,5 +47,26 @@ class RemoteKeyRegistry implements KeyRegistry {
   @Override
   public void remove(String tenantId, String key) {
     // TODO: 2018/9/21 not supported on server side yet
+  }
+
+  private void validateResponse(Response response) {
+    if (response == null) {
+      throw new VaultCipherException("Failed to generate key pair, response is null");
+    }
+
+    KeyPair keyPair = response.getKeyPair();
+    if (keyPair == null) {
+      throw new VaultCipherException("Failed to generate key pair, key pair is null");
+    }
+
+    String publicKey = keyPair.getPublic();
+    if (publicKey == null) {
+      throw new VaultCipherException("Failed to generate key pair, public key is null");
+    }
+
+    String privateKey = keyPair.getPrivate();
+    if (privateKey == null) {
+      throw new VaultCipherException("Failed to generate key pair, private key is null");
+    }
   }
 }

@@ -6,8 +6,8 @@ import com.syswin.temail.kms.vault.cache.DefaultCache;
 import com.syswin.temail.kms.vault.cache.ICache;
 import com.syswin.temail.kms.vault.infrastructure.HttpClientRestClient;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class VaultKeeper {
 
@@ -29,7 +29,7 @@ public class VaultKeeper {
   }
 
   VaultKeeper(Collection<KeyAwareAsymmetricCipher> asymmetricCiphers) {
-    this.asymmetricCiphers = new ConcurrentHashMap<>();
+    this.asymmetricCiphers = new HashMap<>();
     asymmetricCiphers.forEach(cipher -> this.asymmetricCiphers.put(cipher.algorithm(), cipher));
   }
 

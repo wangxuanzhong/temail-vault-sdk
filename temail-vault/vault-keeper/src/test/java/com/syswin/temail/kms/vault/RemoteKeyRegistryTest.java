@@ -44,15 +44,58 @@ public class RemoteKeyRegistryTest {
   }
 
   @Test
-  public void blowsUpIfResponseCodeIsNot200OnRegister() {
-    when(restClient.post(PATH_REGISTRATION, request, Response.class))
-        .thenReturn(new Response(500, "oops", null));
+  public void blowsUpIfNoResponse() {
+    when(restClient.post(PATH_REGISTRATION, request, Response.class)).thenReturn(null);
 
     try {
       cache.register(tenantId, userId);
       expectFailing(VaultCipherException.class);
     } catch (VaultCipherException e) {
-      assertThat(e).hasMessage("Failed to generate key pair, error message is: oops");
+      assertThat(e).hasMessageStartingWith("Failed to generate key pair");
+    }
+
+    verify(iCache, never()).put(anyString(), any(KeyPair.class));
+  }
+
+  @Test
+  public void blowsUpIfNoKeyPair() {
+    when(restClient.post(PATH_REGISTRATION, request, Response.class)).thenReturn(new Response(200, null, null));
+
+    try {
+      cache.register(tenantId, userId);
+      expectFailing(VaultCipherException.class);
+    } catch (VaultCipherException e) {
+      assertThat(e).hasMessageStartingWith("Failed to generate key pair");
+    }
+
+    verify(iCache, never()).put(anyString(), any(KeyPair.class));
+  }
+
+  @Test
+  public void blowsUpIfNoPublicKey() {
+    when(restClient.post(PATH_REGISTRATION, request, Response.class))
+        .thenReturn(new Response(200, null, new KeyPair(privateKey, null)));
+
+    try {
+      cache.register(tenantId, userId);
+      expectFailing(VaultCipherException.class);
+    } catch (VaultCipherException e) {
+      assertThat(e).hasMessageStartingWith("Failed to generate key pair");
+    }
+
+    verify(iCache, never()).put(anyString(), any(KeyPair.class));
+  }
+
+  @Test
+  public void blowsUpIfNoPrivateKey() {
+    when(restClient.post(PATH_REGISTRATION, request, Response.class))
+        .thenReturn(new Response(200, null, new KeyPair(null, privateKey)));
+
+    try {
+      cache.register(tenantId, userId);
+      expectFailing(VaultCipherException.class);
+    } catch (VaultCipherException e) {
+      assertThat(e).hasMessageStartingWith("Failed to generate key pair");
     }
 
     verify(iCache, never()).put(anyString(), any(KeyPair.class));
@@ -79,20 +122,5 @@ public class RemoteKeyRegistryTest {
 
     verify(iCache, never()).put(anyString(), any(KeyPair.class));
     verify(restClient, never()).post(eq(PATH_RETRIEVE), any(Request.class), eq(Response.class));
-  }
-
-  @Test
-  public void blowsUpIfResponseCodeIsNot200OnRetrieve() {
-    when(restClient.post(PATH_RETRIEVE, request, Response.class))
-        .thenReturn(new Response(500, "oops", null));
-
-    try {
-      cache.retrieve(tenantId, userId);
-      expectFailing(VaultCipherException.class);
-    } catch (VaultCipherException e) {
-      assertThat(e).hasMessage("Failed to generate key pair, error message is: oops");
-    }
-
-    verify(iCache, never()).put(anyString(), any(KeyPair.class));
   }
 }

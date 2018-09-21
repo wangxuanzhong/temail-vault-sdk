@@ -30,14 +30,14 @@ public class HttpClientRestClient implements RestClient {
           .execute()
           .returnResponse();
 
-      int statusCode = response.getStatusLine().getStatusCode();
-      if (statusCode != 200) {
-        throw new VaultCipherException(errorMessage(url) + ", status code = " + statusCode);
-      }
-
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       response.getEntity().writeTo(outputStream);
       String json = outputStream.toString();
+
+      int statusCode = response.getStatusLine().getStatusCode();
+      if (statusCode != 200) {
+        throw new VaultCipherException(errorMessage(url) + ", status code = " + statusCode + ", response = " + json);
+      }
 
       return gson.fromJson(json, classType);
     } catch (Exception e) {

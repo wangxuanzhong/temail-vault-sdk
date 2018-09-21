@@ -50,10 +50,8 @@ make -j$(nproc) && make install
 如需编译C++算法源码，需安装 `ld-2.31`
 ```
 wget https://mirrors.tuna.tsinghua.edu.cn/gnu/binutils/binutils-2.31.tar.gz
-ll
 tar xzvf binutils-2.31.tar.gz
 cd binutils-2.31
 ./configure --enable-languages=c,c++ --disable-multilib
-make
 make -j$(nproc) && make install
 ```
