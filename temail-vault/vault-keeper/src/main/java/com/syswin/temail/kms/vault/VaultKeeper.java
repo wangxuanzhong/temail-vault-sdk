@@ -23,6 +23,7 @@ public class VaultKeeper {
 
   private VaultKeeper(String baseUrl, String tenantId, ICache iCache, AsymmetricCipher cipher) {
     this(asList(new DelegatingKeyAwareAsymmetricCipher(
+        tenantId,
         cipher,
         new RemoteKeyRegistry(iCache, new HttpClientRestClient(baseUrl), cipher.algorithm()))));
   }

@@ -27,13 +27,14 @@ public class RestClientTest {
   public static final WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
   private static final String path = "/asymmetric/register";
 
+  private final String tenantId = "syswin";
   private HttpClientRestClient restClient;
 
   @BeforeClass
   public static void beforeClass() {
     stubFor(post(urlEqualTo(path))
         .withRequestBody(new EqualToJsonPattern("{\n"
-//            + "  \"token\": \"syswin\",\n"
+            + "  \"token\": \"syswin\",\n"
             + "  \"text\": \"hello@t.email\",\n"
             + "  \"algorithm\": \"ECDSA\"\n"
             + "}", true, false))
@@ -44,7 +45,7 @@ public class RestClientTest {
                 .withBody("{\n"
                     + "  \"code\": 200,\n"
                     + "  \"data\": {\n"
-//                    + "    \"token\": \"syswin\",\n"
+                    + "    \"token\": \"syswin\",\n"
                     + "    \"text\": \"hello@t.email\",\n"
                     + "    \"algorithm\": \"ECDSA\",\n"
                     + "    \"publicKey\": \"abc\",\n"
@@ -54,7 +55,7 @@ public class RestClientTest {
 
     stubFor(post(urlEqualTo(path))
         .withRequestBody(new EqualToJsonPattern("{\n"
-//            + "  \"token\": \"syswin\",\n"
+            + "  \"token\": \"syswin\",\n"
             + "  \"text\": \"fake@t.email\",\n"
             + "  \"algorithm\": \"ECDSA\"\n"
             + "}", true, false))
@@ -65,7 +66,7 @@ public class RestClientTest {
                 .withBody("{\n"
                     + "  \"code\": 500,\n"
                     + "  \"data\": {\n"
-//                    + "    \"token\": \"syswin\",\n"
+                    + "    \"token\": \"syswin\",\n"
                     + "    \"text\": \"hello@t.email\",\n"
                     + "    \"algorithm\": \"ECDSA\",\n"
                     + "    \"publicKey\": \"abc\",\n"
@@ -81,7 +82,7 @@ public class RestClientTest {
 
   @Test
   public void generateKeyFromRemote() {
-    Response response = restClient.post(path, new Request("hello@t.email", ECDSA), Response.class);
+    Response response = restClient.post(path, new Request(tenantId, "hello@t.email", ECDSA), Response.class);
     assertThat(response.getCode()).isEqualTo(200);
 
     KeyPair keyPair = response.getKeyPair();
@@ -92,11 +93,11 @@ public class RestClientTest {
 
   @Test(expected = VaultCipherException.class)
   public void blowsUpIfResponseIsNot200() {
-    restClient.post(path, new Request("fake@t.email", ECDSA), Response.class);
+    restClient.post(path, new Request(tenantId, "fake@t.email", ECDSA), Response.class);
   }
 
   @Test(expected = VaultCipherException.class)
   public void blowsUpIfRemoteUnreachable() {
-    new HttpClientRestClient("http://localhost:90").post(path, new Request("fake@t.email", ECDSA), Response.class);
+    new HttpClientRestClient("http://localhost:90").post(path, new Request(tenantId, "fake@t.email", ECDSA), Response.class);
   }
 }

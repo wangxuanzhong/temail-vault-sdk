@@ -5,23 +5,25 @@ import java.util.Optional;
 
 public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCipher {
 
+  private final String tenantId;
   private final AsymmetricCipher cipher;
   private final KeyRegistry keyRegistry;
 
-  DelegatingKeyAwareAsymmetricCipher(AsymmetricCipher cipher, KeyRegistry keyRegistry) {
+  DelegatingKeyAwareAsymmetricCipher(String tenantId, AsymmetricCipher cipher, KeyRegistry keyRegistry) {
+    this.tenantId = tenantId;
     this.cipher = cipher;
     this.keyRegistry = keyRegistry;
   }
 
   @Override
   public String register(String userId) {
-    KeyPair keyPair = keyRegistry.register(userId);
+    KeyPair keyPair = keyRegistry.register(tenantId, userId);
     return keyPair.getPublic();
   }
 
   @Override
   public Optional<String> publicKey(String userId) {
-    KeyPair keyPair = keyRegistry.retrieve(userId);
+    KeyPair keyPair = keyRegistry.retrieve(tenantId, userId);
     if (keyPair == null) {
       return Optional.empty();
     }
@@ -50,7 +52,7 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
 
   @Override
   public void revoke(String userId) {
-    keyRegistry.remove(userId);
+    keyRegistry.remove(tenantId, userId);
   }
 
   @Override
@@ -59,7 +61,7 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   private KeyPair keyPair(String userId) {
-    KeyPair keyPair = keyRegistry.retrieve(userId);
+    KeyPair keyPair = keyRegistry.retrieve(tenantId, userId);
     if (keyPair == null) {
       throw new VaultCipherException("No such user registered: " + userId);
     }

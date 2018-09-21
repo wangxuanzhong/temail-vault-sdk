@@ -19,8 +19,8 @@ class RemoteKeyRegistry implements KeyRegistry {
   }
 
   @Override
-  public KeyPair register(String key) {
-    Response response = restClient.post(PATH_REGISTRATION, new Request(key, algorithm), Response.class);
+  public KeyPair register(String tenantId, String key) {
+    Response response = restClient.post(PATH_REGISTRATION, new Request(tenantId, key, algorithm), Response.class);
 
     if (response.getCode() != 200) {
       throw new VaultCipherException("Failed to generate key pair, error message is: " + response.getMessage());
@@ -32,11 +32,11 @@ class RemoteKeyRegistry implements KeyRegistry {
   }
 
   @Override
-  public KeyPair retrieve(String key) {
+  public KeyPair retrieve(String tenantId, String key) {
     KeyPair keyPair = cache.get(key);
 
     if (keyPair == null) {
-      Response response = restClient.post(PATH_RETRIEVE, new Request(key, algorithm), Response.class);
+      Response response = restClient.post(PATH_RETRIEVE, new Request(tenantId, key, algorithm), Response.class);
 
       if (response.getCode() != 200) {
         throw new VaultCipherException("Failed to generate key pair, error message is: " + response.getMessage());
@@ -49,7 +49,7 @@ class RemoteKeyRegistry implements KeyRegistry {
   }
 
   @Override
-  public void remove(String key) {
+  public void remove(String tenantId, String key) {
     // TODO: 2018/9/21 not supported on server side yet
   }
 }

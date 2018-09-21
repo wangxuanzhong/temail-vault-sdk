@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 
 public class DelegatingKeyAwareAsymmetricCipherTest {
 
+  private final String tenantId = uniquify("tenantId");
   private final String userId = uniquify("userId");
   private final String plaintext = uniquify("plaintext");
   private final String encrypted = uniquify("encrypted");
@@ -26,11 +27,11 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   private final AsymmetricCipher vaultCipher = Mockito.mock(AsymmetricCipher.class);
   private final KeyRegistry keyRegistry = Mockito.mock(KeyRegistry.class);
-  private final KeyAwareAsymmetricCipher keyAwareCipher = new DelegatingKeyAwareAsymmetricCipher(vaultCipher, keyRegistry);
+  private final KeyAwareAsymmetricCipher keyAwareCipher = new DelegatingKeyAwareAsymmetricCipher(tenantId, vaultCipher, keyRegistry);
 
   @Test
   public void encryptWithKeyOfRegisteredUser() {
-    when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
+    when(keyRegistry.retrieve(tenantId, userId)).thenReturn(keyPair);
     when(vaultCipher.encrypt(publicKey, plaintext)).thenReturn(encrypted);
 
     String encrypted = keyAwareCipher.encrypt(userId, plaintext);
@@ -40,7 +41,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   @Test
   public void decryptWithKeyOfRegisteredUser() {
-    when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
+    when(keyRegistry.retrieve(tenantId, userId)).thenReturn(keyPair);
     when(vaultCipher.decrypt(privateKey, encrypted)).thenReturn(plaintext);
 
     String plaintext = keyAwareCipher.decrypt(userId, encrypted);
@@ -50,7 +51,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   @Test
   public void signWithKeyOfRegisteredUser() {
-    when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
+    when(keyRegistry.retrieve(tenantId, userId)).thenReturn(keyPair);
     when(vaultCipher.sign(privateKey, plaintext)).thenReturn(signature);
 
     String signature = keyAwareCipher.sign(userId, plaintext);
@@ -60,7 +61,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   @Test
   public void verifyWithKeyOfRegisteredUser() {
-    when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
+    when(keyRegistry.retrieve(tenantId, userId)).thenReturn(keyPair);
     when(vaultCipher.verify(publicKey, plaintext, signature)).thenReturn(true);
 
     boolean verified = keyAwareCipher.verify(userId, plaintext, signature);
@@ -70,7 +71,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   @Test
   public void registerUserInRegistry() {
-    when(keyRegistry.register(userId)).thenReturn(keyPair);
+    when(keyRegistry.register(tenantId, userId)).thenReturn(keyPair);
 
     String publicKey = keyAwareCipher.register(userId);
 
@@ -99,7 +100,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   @Test
   public void shouldGetPublicKeyOfRegisteredUser() {
-    when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
+    when(keyRegistry.retrieve(tenantId, userId)).thenReturn(keyPair);
 
     Optional<String> publicKey = keyAwareCipher.publicKey(userId);
 
@@ -111,6 +112,6 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   public void shouldRemoveUser() {
     keyAwareCipher.revoke(userId);
 
-    verify(keyRegistry).remove(userId);
+    verify(keyRegistry).remove(tenantId, userId);
   }
 }

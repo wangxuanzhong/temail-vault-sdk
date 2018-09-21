@@ -2,13 +2,15 @@ package com.syswin.temail.kms.vault;
 
 import java.util.Objects;
 
-public class Request {
+class Request {
 
+  private final String token;
   // TODO: 2018/9/21 weird naming
   private final String text;
   private final String algorithm;
 
-  public Request(String userId, CipherAlgorithm algorithm) {
+  Request(String tenantId, String userId, CipherAlgorithm algorithm) {
+    this.token = tenantId;
     this.text = userId;
     this.algorithm = algorithm.name();
   }
@@ -22,12 +24,13 @@ public class Request {
       return false;
     }
     Request request = (Request) o;
-    return Objects.equals(text, request.text) &&
+    return Objects.equals(token, request.token) &&
+        Objects.equals(text, request.text) &&
         Objects.equals(algorithm, request.algorithm);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(text, algorithm);
+    return Objects.hash(token, text, algorithm);
   }
 }

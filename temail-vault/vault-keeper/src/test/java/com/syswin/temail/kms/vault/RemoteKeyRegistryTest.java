@@ -20,12 +20,13 @@ import org.mockito.Mockito;
 
 public class RemoteKeyRegistryTest {
 
+  private final String tenantId = uniquify("tenantId");
   private final String userId = uniquify("userId");
 
   private final byte[] publicKey = "abc".getBytes();
   private final byte[] privateKey = "xyz".getBytes();
   private final KeyPair keyPair = new KeyPair(privateKey, publicKey);
-  private final Request request = new Request(userId, ECDSA);
+  private final Request request = new Request(tenantId, userId, ECDSA);
 
   private final ICache iCache = Mockito.mock(ICache.class);
   private final RestClient restClient = Mockito.mock(RestClient.class);
@@ -36,7 +37,7 @@ public class RemoteKeyRegistryTest {
     when(restClient.post(PATH_REGISTRATION, request, Response.class))
         .thenReturn(new Response(200, null, keyPair));
 
-    KeyPair keyPair = cache.register(userId);
+    KeyPair keyPair = cache.register(tenantId, userId);
 
     assertThat(keyPair).isEqualTo(this.keyPair);
     verify(iCache).put(userId, this.keyPair);
@@ -48,7 +49,7 @@ public class RemoteKeyRegistryTest {
         .thenReturn(new Response(500, "oops", null));
 
     try {
-      cache.register(userId);
+      cache.register(tenantId, userId);
       expectFailing(VaultCipherException.class);
     } catch (VaultCipherException e) {
       assertThat(e).hasMessage("Failed to generate key pair, error message is: oops");
@@ -62,7 +63,7 @@ public class RemoteKeyRegistryTest {
     when(restClient.post(PATH_RETRIEVE, request, Response.class))
         .thenReturn(new Response(200, null, keyPair));
 
-    KeyPair keyPair = cache.retrieve(userId);
+    KeyPair keyPair = cache.retrieve(tenantId, userId);
 
     assertThat(keyPair).isEqualTo(this.keyPair);
     verify(iCache).put(userId, keyPair);
@@ -72,7 +73,7 @@ public class RemoteKeyRegistryTest {
   public void fetchKeyFromCache() {
     when(iCache.get(userId)).thenReturn(keyPair);
 
-    KeyPair keyPair = cache.retrieve(userId);
+    KeyPair keyPair = cache.retrieve(tenantId, userId);
 
     assertThat(keyPair).isEqualTo(this.keyPair);
 
@@ -86,7 +87,7 @@ public class RemoteKeyRegistryTest {
         .thenReturn(new Response(500, "oops", null));
 
     try {
-      cache.retrieve(userId);
+      cache.retrieve(tenantId, userId);
       expectFailing(VaultCipherException.class);
     } catch (VaultCipherException e) {
       assertThat(e).hasMessage("Failed to generate key pair, error message is: oops");
