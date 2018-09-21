@@ -11,12 +11,23 @@
 ```
 1. 使用 `VaultKeeper` 获取算法，当前只支持 `ECDSA` ，使用算法前须注册账户， `VaultKeeper` 会自动管理用户密证。
 ```java
-  KeyAwareAsymmetricCipher cipher = new VaultKeeper().asymmetricCipher(CipherAlgorithm.ECDSA);
+  // 使用VaultKeeper须传入租户ID (例如syswin)，当前租户ID未生效，后续须先注册未合法租户方可使用SDK
+  KeyAwareAsymmetricCipher cipher = new VaultKeeper("syswin").asymmetricCipher(CipherAlgorithm.ECDSA);
 
   byte[] publicKey = cipher.register("sean@t.email");
   cipher.encrypt("sean@t.email", "hello world");
   // ...
 ```
+
+## 本地测试
+**注意：当前本地测试只支持LINUX和MAC**
+
+1. 注释 `vault-native/pom.xml` 中以下行
+```
+<linkerEndOption>-luuid</linkerEndOption>
+```
+1. 运行 `mvn package -DskipTests`
+1. 将 `libecc.dylib` 放入 `/usr/local/lib` 
 
 ## FAQ
 ### C++ 编译器版本过低
