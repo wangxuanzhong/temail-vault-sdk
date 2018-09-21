@@ -3,6 +3,7 @@ package com.syswin.temail.kms.sdk;
 import com.syswin.temail.kms.vault.VaultKeeper;
 import com.syswin.temail.kms.vault.cache.ICache;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
@@ -24,8 +25,8 @@ public class KmsSdkAutoConfiguration {
   }
 
   @Bean
-  public VaultKeeper vaultKeeper(ICache kmsCache) {
-    return new VaultKeeper(UUID.randomUUID().toString(), kmsCache);
+  public VaultKeeper vaultKeeper(ICache kmsCache, @Value("${temail.vault.registry.url}") String baseUrl) {
+    return new VaultKeeper(baseUrl, UUID.randomUUID().toString(), kmsCache);
   }
 
   @Bean
