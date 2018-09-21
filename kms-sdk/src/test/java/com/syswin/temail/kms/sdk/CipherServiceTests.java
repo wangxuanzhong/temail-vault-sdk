@@ -77,9 +77,9 @@ public class CipherServiceTests {
 
   @Test
   public void symmetricEncrypt() {
-
-    byte[] s = cipherService.symmetricEncrypt(temail, encrypted);
-    String s1 = cipherService.symmetricDecrypt(temail, s);
+    String key = "EC78D1D6D39B6E2B";
+    byte[] s = cipherService.symmetricEncrypt(key, encrypted);
+    String s1 = cipherService.symmetricDecrypt(key, s);
     Assert.assertEquals(s1, encrypted);
   }
 
