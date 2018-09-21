@@ -26,6 +26,7 @@ class CipherService {
   private final KmsProperties kmsProperties;
   private final RestTemplate restTemplate;
   private final VaultKeeper vaultKeeper;
+  private final SymmetricCipher symmetricCipher = new AESCipher();
 
   public CipherService(KmsProperties kmsProperties, RestTemplate restTemplate, VaultKeeper vaultKeeper) {
     this.kmsProperties = kmsProperties;
@@ -60,16 +61,14 @@ class CipherService {
    * [[对称]]加密
    */
   public byte[] symmetricEncrypt(String keyword, String text) {
-    SymmetricCipher aesCipher = new AESCipher(keyword);
-    return aesCipher.encrypt(text);
+    return symmetricCipher.encrypt(keyword, text);
   }
 
   /**
    * [[对称]]解密
    */
   public String symmetricDecrypt(String keyword, byte[] encrypted) {
-    SymmetricCipher aesCipher = new AESCipher(keyword);
-    return aesCipher.decrypt(encrypted);
+    return symmetricCipher.decrypt(keyword, encrypted);
   }
 
 

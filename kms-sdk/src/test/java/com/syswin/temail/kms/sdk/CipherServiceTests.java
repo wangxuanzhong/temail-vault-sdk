@@ -2,11 +2,11 @@ package com.syswin.temail.kms.sdk;
 
 import static com.syswin.temail.kms.sdk.CipherService.AES;
 import static com.syswin.temail.kms.sdk.CipherService.ALGORITHM;
+import static com.syswin.temail.kms.sdk.CipherService.ECDSA;
 import static com.syswin.temail.kms.sdk.CipherService.TEXT;
 
+import com.syswin.temail.kms.sdk.dto.AsymmetricDto;
 import com.syswin.temail.kms.vault.VaultKeeper;
-import com.syswin.temail.kms.vault.aes.AESCipher;
-import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
@@ -17,20 +17,22 @@ import org.springframework.web.client.RestTemplate;
 
 public class CipherServiceTests {
 
-  public static final String URL_SYMMETRIC_REGISTER = "http://127.0.0.1:8094/symmetric/register";
-  public static final String URL_SYMMETRIC_KEY = "http://127.0.0.1:8094/symmetric/key";
-  public static final String keyword = "keyword@temail.com";
+  private static final String URL_SYMMETRIC_REGISTER = "http://127.0.0.1:8094/symmetric/register";
+  private static final String URL_SYMMETRIC_KEY = "http://127.0.0.1:8094/symmetric/key";
+  private static final String URL_ASYMMETRIC_REGISTER = "http://127.0.0.1:8094/asymmetric/register";
+  private static final String URL_ASYMMETRIC_KEY = "http://127.0.0.1:8094/asymmetric/key";
+
   private KmsProperties kmsProperties = Mockito.mock(KmsProperties.class);
   private RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
   private VaultKeeper vaultKeeper = Mockito.mock(VaultKeeper.class);
   private CipherService cipherService = new CipherService(kmsProperties, restTemplate, vaultKeeper);
-  private SymmetricCipher aesCipher;
   private String temail;
   private String encrypted;
 
   @Before
   public void before() {
-    aesCipher = new AESCipher(keyword);
+    temail = "temail";
+    encrypted = "this is test";
   }
 
   /**
@@ -39,7 +41,7 @@ public class CipherServiceTests {
   @Test
   public void symmetricRegister() {
     Map map = new HashMap();
-    map.put(TEXT, "temail");
+    map.put(TEXT, temail);
     map.put(ALGORITHM, AES);
     Mockito.when(kmsProperties.getUrlSymmetricRegister()).thenReturn(URL_SYMMETRIC_REGISTER);
     Mockito.when(cipherService.post(URL_SYMMETRIC_REGISTER, map)).thenReturn("{\n"
@@ -75,11 +77,55 @@ public class CipherServiceTests {
 
   @Test
   public void symmetricEncrypt() {
-    temail = "temail";
-    encrypted = "this is test";
+
     byte[] s = cipherService.symmetricEncrypt(temail, encrypted);
     String s1 = cipherService.symmetricDecrypt(temail, s);
     Assert.assertEquals(s1, encrypted);
+  }
+
+  @Test
+  public void asymmetricRegister() {
+    Map map = new HashMap();
+    map.put(TEXT, temail);
+    map.put(ALGORITHM, ECDSA);
+    Mockito.when(kmsProperties.getUrlAsymmetricRegister()).thenReturn(URL_ASYMMETRIC_REGISTER);
+    Mockito.when(cipherService.post(URL_ASYMMETRIC_REGISTER, map)).thenReturn("{\n"
+        + "\t\"code\": 200,\n"
+        + "\t\"message\": \"success\",\n"
+        + "\t\"data\": {\n"
+        + "\t\t\"text\": \"temail\",\n"
+        + "\t\t\"publicKey\": \"publicKey\",\n"
+        + "\t\t\"privateKey\": \"privateKey\",\n"
+        + "\t\t\"algorithm\": \"ECDSA\"\n"
+        + "\t}\n"
+        + "}");
+    AsymmetricDto dto = cipherService.asymmetricRegister(temail);
+    Assert.assertNotNull(dto);
+    Assert.assertEquals(dto.getPublicKey(), "publicKey");
+    Assert.assertEquals(dto.getPrivateKey(), "privateKey");
+    Assert.assertEquals(dto.getAlgorithm(), ECDSA);
+  }
+
+  @Test
+  public void asymmetricKey() {
+    Map map = new HashMap();
+    map.put(TEXT, temail);
+    Mockito.when(kmsProperties.getUrlAsymmetricKey()).thenReturn(URL_ASYMMETRIC_KEY);
+    Mockito.when(cipherService.post(URL_ASYMMETRIC_KEY, map)).thenReturn("{\n"
+        + "\t\"code\": 200,\n"
+        + "\t\"message\": \"success\",\n"
+        + "\t\"data\": {\n"
+        + "\t\t\"text\": \"temail\",\n"
+        + "\t\t\"publicKey\": \"publicKey\",\n"
+        + "\t\t\"privateKey\": \"privateKey\",\n"
+        + "\t\t\"algorithm\": \"ECDSA\"\n"
+        + "\t}\n"
+        + "}");
+    AsymmetricDto dto = cipherService.getAsymmetricKeypair(temail);
+    Assert.assertNotNull(dto);
+    Assert.assertEquals(dto.getPublicKey(), "publicKey");
+    Assert.assertEquals(dto.getPrivateKey(), "privateKey");
+    Assert.assertEquals(dto.getAlgorithm(), ECDSA);
   }
 
 }
