@@ -16,7 +16,7 @@ public class CipherJni {
       } catch (IOException e) {
         throw new IllegalStateException("Failed to load native library", e);
       }
-    } catch (Error e) {
+    } catch (Throwable e) {
       // TODO 兼容windows版本开发使用
       if (System.getProperty("os.name").contains("Windows")) {
         e.printStackTrace();
