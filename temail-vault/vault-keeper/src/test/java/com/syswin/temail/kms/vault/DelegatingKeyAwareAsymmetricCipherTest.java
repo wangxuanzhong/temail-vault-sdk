@@ -20,17 +20,15 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   private final byte[] encrypted = uniquify("encrypted").getBytes();
   private final byte[] signature = uniquify("signature").getBytes();
 
-//  private final byte[] publicKey = Mockito.mock(byte[].class);
-  private final byte[] publicKey = new byte[0];
-//  private final byte[] privateKey = Mockito.mock(byte[].class);
-  private final byte[] privateKey = new byte[0];
+  private final byte[] publicKey = "abc".getBytes();
+  private final byte[] privateKey = "xyz".getBytes();
 
   private final AsymmetricCipher vaultCipher = Mockito.mock(AsymmetricCipher.class);
   private ICache cache = new DefaultCache();
   private final KeyAwareAsymmetricCipher keyAwareCipher = new DelegatingKeyAwareAsymmetricCipher(vaultCipher, cache);
 
   @Test
-  public void encryptWithKeyOfRegisteredUser() throws Exception {
+  public void encryptWithKeyOfRegisteredUser() {
     when(vaultCipher.getKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
     when(vaultCipher.encrypt(publicKey, plaintext)).thenReturn(encrypted);
 
@@ -42,7 +40,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   }
 
   @Test
-  public void decryptWithKeyOfRegisteredUser() throws Exception {
+  public void decryptWithKeyOfRegisteredUser() {
     when(vaultCipher.getKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
     when(vaultCipher.decrypt(privateKey, encrypted)).thenReturn(plaintext);
 
@@ -54,7 +52,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   }
 
   @Test
-  public void signWithKeyOfRegisteredUser() throws Exception {
+  public void signWithKeyOfRegisteredUser() {
     when(vaultCipher.getKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
     when(vaultCipher.sign(privateKey, plaintext)).thenReturn(signature);
 
@@ -87,7 +85,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   }
 
   @Test
-  public void blowsUpIfNoSuchUserRegistered() throws Exception {
+  public void blowsUpIfNoSuchUserRegistered() {
     try {
       keyAwareCipher.decrypt(userId, encrypted);
       expectFailing(VaultCipherException.class);

@@ -11,7 +11,7 @@
 ```
 1. 使用 `VaultKeeper` 获取算法，当前只支持 `ECDSA` ，使用算法前须注册账户， `VaultKeeper` 会自动管理用户密证。
 ```java
-  // 使用VaultKeeper须传入租户ID (例如syswin)，当前租户ID未生效，后续须先注册未合法租户方可使用SDK
+  // 使用VaultKeeper须传入租户ID (例如syswin)，当前租户ID未生效，后续须先注册为合法租户方可使用SDK
   KeyAwareAsymmetricCipher cipher = new VaultKeeper("syswin").asymmetricCipher(CipherAlgorithm.ECDSA);
 
   byte[] publicKey = cipher.register("sean@t.email");

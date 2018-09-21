@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultCache implements ICache {
 
-  private final Map<String, KeyPair> userKeys = new ConcurrentHashMap<String, KeyPair>();
+  private final Map<String, KeyPair> userKeys = new ConcurrentHashMap<>();
 
   @Override
   public void put(String key, KeyPair value) {
