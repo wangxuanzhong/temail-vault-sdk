@@ -12,12 +12,12 @@ public class VaultKeeper {
 
   private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> asymmetricCiphers;
 
-  public VaultKeeper(ICache iCache) {
+  public VaultKeeper(String tenantId, ICache iCache) {
     this(asList(new DelegatingKeyAwareAsymmetricCipher(new NativeAsymmetricCipher(), iCache)));
   }
 
-  public VaultKeeper() {
-    this(new DefaultCache());
+  public VaultKeeper(String tenantId) {
+    this(tenantId, new DefaultCache());
   }
 
   VaultKeeper(Collection<KeyAwareAsymmetricCipher> asymmetricCiphers) {
