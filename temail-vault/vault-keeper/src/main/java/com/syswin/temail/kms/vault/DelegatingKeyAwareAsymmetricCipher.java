@@ -14,13 +14,13 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   @Override
-  public byte[] register(String userId) {
+  public String register(String userId) {
     KeyPair keyPair = keyRegistry.register(userId);
     return keyPair.getPublic();
   }
 
   @Override
-  public Optional<byte[]> publicKey(String userId) {
+  public Optional<String> publicKey(String userId) {
     KeyPair keyPair = keyRegistry.retrieve(userId);
     if (keyPair == null) {
       return Optional.empty();
@@ -29,22 +29,22 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   @Override
-  public byte[] encrypt(String userId, String plaintext) {
+  public String encrypt(String userId, String plaintext) {
     return cipher.encrypt(keyPair(userId).getPublic(), plaintext);
   }
 
   @Override
-  public String decrypt(String userId, byte[] encryptedBytes) {
+  public String decrypt(String userId, String encryptedBytes) {
     return cipher.decrypt(keyPair(userId).getPrivate(), encryptedBytes);
   }
 
   @Override
-  public byte[] sign(String userId, String plaintext) {
+  public String sign(String userId, String plaintext) {
     return cipher.sign(keyPair(userId).getPrivate(), plaintext);
   }
 
   @Override
-  public boolean verify(String userId, String plaintext, byte[] signed) {
+  public boolean verify(String userId, String plaintext, String signed) {
     return cipher.verify(keyPair(userId).getPublic(), plaintext, signed);
   }
 

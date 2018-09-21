@@ -17,12 +17,12 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   private final String userId = uniquify("userId");
   private final String plaintext = uniquify("plaintext");
-  private final byte[] encrypted = uniquify("encrypted").getBytes();
-  private final byte[] signature = uniquify("signature").getBytes();
+  private final String encrypted = uniquify("encrypted");
+  private final String signature = uniquify("signature");
 
-  private final byte[] publicKey = "abc".getBytes();
-  private final byte[] privateKey = "xyz".getBytes();
-  private final KeyPair keyPair = new KeyPair(privateKey, publicKey);
+  private final String publicKey = "abc";
+  private final String privateKey = "xyz";
+  private final KeyPair keyPair = new KeyPair(privateKey.getBytes(), publicKey.getBytes());
 
   private final AsymmetricCipher vaultCipher = Mockito.mock(AsymmetricCipher.class);
   private final KeyRegistry keyRegistry = Mockito.mock(KeyRegistry.class);
@@ -33,7 +33,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
     when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
     when(vaultCipher.encrypt(publicKey, plaintext)).thenReturn(encrypted);
 
-    byte[] encrypted = keyAwareCipher.encrypt(userId, plaintext);
+    String encrypted = keyAwareCipher.encrypt(userId, plaintext);
     assertThat(encrypted).isEqualTo(this.encrypted);
     verify(vaultCipher, never()).getKeyPair();
   }
@@ -53,7 +53,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
     when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
     when(vaultCipher.sign(privateKey, plaintext)).thenReturn(signature);
 
-    byte[] signature = keyAwareCipher.sign(userId, plaintext);
+    String signature = keyAwareCipher.sign(userId, plaintext);
     assertThat(signature).isEqualTo(this.signature);
     verify(vaultCipher, never()).getKeyPair();
   }
@@ -72,7 +72,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   public void registerUserInRegistry() {
     when(keyRegistry.register(userId)).thenReturn(keyPair);
 
-    byte[] publicKey = keyAwareCipher.register(userId);
+    String publicKey = keyAwareCipher.register(userId);
 
     assertThat(publicKey).isEqualTo(this.publicKey);
     verify(vaultCipher, never()).getKeyPair();
@@ -101,7 +101,7 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
   public void shouldGetPublicKeyOfRegisteredUser() {
     when(keyRegistry.retrieve(userId)).thenReturn(keyPair);
 
-    Optional<byte[]> publicKey = keyAwareCipher.publicKey(userId);
+    Optional<String> publicKey = keyAwareCipher.publicKey(userId);
 
     assertThat(publicKey).contains(this.publicKey);
     verify(vaultCipher, never()).getKeyPair();

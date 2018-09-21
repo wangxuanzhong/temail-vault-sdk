@@ -1,9 +1,11 @@
 package com.syswin.temail.kms.sdk;
 
+import static com.syswin.temail.kms.sdk.utils.CoderUtils.decoder;
+import static com.syswin.temail.kms.sdk.utils.CoderUtils.encoder;
+
 import com.syswin.temail.kms.sdk.dto.AsymmetricDto;
 import com.syswin.temail.kms.vault.KeyPair;
 import com.syswin.temail.kms.vault.cache.ICache;
-import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -57,16 +59,23 @@ public class TSBService {
    */
   @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_' + #p0")
   public String asymmetricRegister(String temail) {
-    return registerKeyPair(temail);
+    KeyPair keyPair = iCache.get(temail);
+    if (keyPair != null) {
+      return keyPair.getPublic();
+    }
+    AsymmetricDto dto = cipherService.asymmetricRegister(temail);
+    keyPair = new KeyPair(decoder(dto.getPrivateKey()), decoder(dto.getPublicKey()));
+    iCache.put(temail, keyPair);
+    return dto.getPublicKey();
   }
 
   /**
    * cache中缓存temail
    */
-  private String registerKeyPair(String temail) {
+  private String getAsymmetricKeypair(String temail) {
     KeyPair keyPair = iCache.get(temail);
     if (keyPair != null) {
-      return encoder(keyPair.getPublic());
+      return keyPair.getPublic();
     }
     AsymmetricDto dto = cipherService.getAsymmetricKeypair(temail);
     keyPair = new KeyPair(decoder(dto.getPrivateKey()), decoder(dto.getPublicKey()));
@@ -79,14 +88,14 @@ public class TSBService {
    */
   @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_' + #p0")
   public String getAsymmetricPubKey(String temail) {
-    return registerKeyPair(temail);
+    return getAsymmetricKeypair(temail);
   }
 
   /**
    * TODO [非对称]签名
    */
   public String sign(String temail, String unsignText) {
-    registerKeyPair(temail);
+    getAsymmetricKeypair(temail);
     return cipherService.sign(temail, unsignText);
   }
 
@@ -94,16 +103,16 @@ public class TSBService {
    * TODO [非对称]验证
    */
   @Cacheable(value = "kms", key = "'ASYMMETRIC_VERIFY_' + #p0 + '_' + #p1+ '_' + #p2")
-  public boolean asymmetricVerify(String temail, String signed, String unsigned) {
-    registerKeyPair(temail);
-    return cipherService.asymmetricVerify(temail, signed, unsigned);
+  public boolean asymmetricVerify(String temail, String unsigned, String signed) {
+    getAsymmetricKeypair(temail);
+    return cipherService.asymmetricVerify(temail, unsigned, signed);
   }
 
   /**
    * TODO [非对称]加密
    */
   public String asymmetricEncrypt(String temail, String text) {
-    registerKeyPair(temail);
+    getAsymmetricKeypair(temail);
     return cipherService.asymmetricEncrypt(temail, text);
   }
 
@@ -111,16 +120,9 @@ public class TSBService {
    * TODO [非对称]解密
    */
   public String asymmetricDecrypt(String temail, String encrypted) {
-    registerKeyPair(temail);
+    getAsymmetricKeypair(temail);
     return cipherService.asymmetricDecrypt(temail, encrypted);
   }
 
-  private byte[] decoder(String signed) {
-    return Base64.getDecoder().decode(signed);
-  }
-
-  private String encoder(byte[] bytes) {
-    return Base64.getEncoder().encodeToString(bytes);
-  }
 
 }

@@ -17,7 +17,7 @@
     <module>vault-native</module>
     <module>vault-jni</module>
     <module>vault-keeper</module>
-    <module>vault-algo-ecc</module>
+    <!--<module>vault-algo-ecc</module>-->
   </modules>
 
   <dependencyManagement>

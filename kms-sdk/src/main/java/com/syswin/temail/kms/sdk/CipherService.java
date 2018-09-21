@@ -1,5 +1,8 @@
 package com.syswin.temail.kms.sdk;
 
+import static com.syswin.temail.kms.sdk.utils.CoderUtils.decoder;
+import static com.syswin.temail.kms.sdk.utils.CoderUtils.encoder;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.syswin.temail.kms.sdk.dto.AsymmetricDto;
@@ -9,7 +12,6 @@ import com.syswin.temail.kms.vault.CipherAlgorithm;
 import com.syswin.temail.kms.vault.VaultKeeper;
 import com.syswin.temail.kms.vault.aes.AESCipher;
 import com.syswin.temail.kms.vault.aes.SymmetricCipher;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -23,6 +25,11 @@ import org.springframework.web.client.RestTemplate;
 class CipherService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CipherService.class);
+  public static final String TEXT = "text";
+  public static final String ALGORITHM = "algorithm";
+  public static final String AES = "AES";
+  public static final String SM_2 = "SM2";
+  public static final String ECDSA = "ECDSA";
   private final KmsProperties kmsProperties;
   private final RestTemplate restTemplate;
   private final VaultKeeper vaultKeeper;
@@ -39,7 +46,8 @@ class CipherService {
    */
   public String symmetricRegister(String temail) {
     Map map = new HashMap();
-    map.put("text", temail);
+    map.put(TEXT, temail);
+    map.put(ALGORITHM, AES);
     String result = post(kmsProperties.getUrlSymmetricRegister(), map);
     SymmetricDto data = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), SymmetricDto.class);
     return data.getSecretKey();
@@ -50,7 +58,7 @@ class CipherService {
    */
   public String getSymmetricKey(String temail) {
     Map map = new HashMap();
-    map.put("text", temail);
+    map.put(TEXT, temail);
     String result = post(kmsProperties.getUrlSymmetricKey(), map);
     SymmetricDto data = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), SymmetricDto.class);
     LOGGER.debug("getSymmetricKey key={},rs={}", temail, data);
@@ -71,55 +79,52 @@ class CipherService {
     return symmetricCipher.decrypt(keyword, encrypted);
   }
 
-
-  @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_PAIR' + #p0")
-  public AsymmetricDto getAsymmetricKeypair(String temail) {
-    Map map = new HashMap();
-    map.put("text", temail);
-    String result = post(kmsProperties.getUrlAsymmetricRegister(), map);
-    AsymmetricDto dto = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), AsymmetricDto.class);
-    return dto;
-  }
-
   /**
    * TODO [非对称]签名
    */
   public String sign(String temail, String unsignText) {
-    byte[] signed = vaultKeeper.asymmetricCipher(CipherAlgorithm.SM2).sign(temail, unsignText);
-    return encoder(signed);
+    return vaultKeeper.asymmetricCipher(CipherAlgorithm.ECDSA).sign(temail, unsignText);
   }
 
   /**
    * TODO [非对称]验证
    */
-  public boolean asymmetricVerify(String temail, String signed, String unsigned) {
-    byte[] sign = decoder(signed);
+  public boolean asymmetricVerify(String temail, String unsigned, String signed) {
     LOGGER.debug("getSymmetricKey temail={},signed={},unsigned={}", temail, signed, unsigned);
-    return vaultKeeper.asymmetricCipher(CipherAlgorithm.SM2).verify(temail, unsigned, sign);
+    return vaultKeeper.asymmetricCipher(CipherAlgorithm.ECDSA).verify(temail, unsigned, signed);
   }
 
   /**
    * TODO [非对称]加密
    */
   public String asymmetricEncrypt(String temail, String text) {
-    byte[] bytes = vaultKeeper.asymmetricCipher(CipherAlgorithm.SM2).encrypt(temail, text);
-    return encoder(bytes);
+    return vaultKeeper.asymmetricCipher(CipherAlgorithm.ECDSA).encrypt(temail, text);
   }
 
   /**
    * TODO [非对称]解密
    */
   public String asymmetricDecrypt(String temail, String encrypted) {
-    byte[] encryptBytes = decoder(encrypted);
-    return vaultKeeper.asymmetricCipher(CipherAlgorithm.SM2).decrypt(temail, encryptBytes);
+    return vaultKeeper.asymmetricCipher(CipherAlgorithm.ECDSA).decrypt(temail, encrypted);
   }
 
-  private byte[] decoder(String signed) {
-    return Base64.getDecoder().decode(signed);
+  @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_PAIR' + #p0")
+  public AsymmetricDto asymmetricRegister(String temail) {
+    Map map = new HashMap();
+    map.put(TEXT, temail);
+    map.put(ALGORITHM, ECDSA);
+    String result = post(kmsProperties.getUrlAsymmetricRegister(), map);
+    AsymmetricDto dto = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), AsymmetricDto.class);
+    return dto;
   }
 
-  private String encoder(byte[] bytes) {
-    return Base64.getEncoder().encodeToString(bytes);
+  @Cacheable(value = "kms", key = "'ASYMMETRIC_KEY_PAIR' + #p0")
+  public AsymmetricDto getAsymmetricKeypair(String temail) {
+    Map map = new HashMap();
+    map.put(TEXT, temail);
+    String result = post(kmsProperties.getUrlAsymmetricKey(), map);
+    AsymmetricDto dto = new Gson().fromJson(new JsonParser().parse(result).getAsJsonObject().get("data"), AsymmetricDto.class);
+    return dto;
   }
 
   String post(String url, Map map) {

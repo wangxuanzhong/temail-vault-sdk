@@ -1,20 +1,22 @@
 package com.syswin.temail.kms.vault;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class KeyPair implements java.io.Serializable {
 
-  private byte[] privateKey;
-  private byte[] publicKey;
+  private String privateKey;
+  private String publicKey;
 
   public KeyPair(byte[] privateKey, byte[] publicKey) {
-    this.privateKey = privateKey;
-    this.publicKey = publicKey;
+    this.privateKey = new String(privateKey, UTF_8);
+    this.publicKey = new String(publicKey, UTF_8);
   }
 
-  public byte[] getPrivate() {
+  public String getPrivate() {
     return privateKey;
   }
 
-  public byte[] getPublic() {
+  public String getPublic() {
     return publicKey;
   }
 }

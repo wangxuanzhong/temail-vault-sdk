@@ -11,7 +11,7 @@ public interface KeyAwareCipher {
    * @return 明文加密后对应的密文
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
-  byte[] encrypt(String userId, String plaintext);
+  String encrypt(String userId, String plaintext);
 
   /**
    * 根据用户ID获取对应密钥进行解密
@@ -20,7 +20,7 @@ public interface KeyAwareCipher {
    * @return 解密后的明文
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
-  String decrypt(String userId, byte[] encryptedBytes);
+  String decrypt(String userId, String encryptedBytes);
 
   /**
    * 根据用户ID获取对应密钥进行签名
@@ -29,7 +29,7 @@ public interface KeyAwareCipher {
    * @return 明文对应的签名
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
-  byte[] sign(String userId, String plaintext);
+  String sign(String userId, String plaintext);
 
   /**
    * 根据用户ID获取对应密钥进行验签
@@ -39,7 +39,7 @@ public interface KeyAwareCipher {
    * @return 签名是否与明文匹配
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
-  boolean verify(String userId, String plaintext, byte[] signed);
+  boolean verify(String userId, String plaintext, String signed);
 
   /**
    * 删除管理的用户及其密钥

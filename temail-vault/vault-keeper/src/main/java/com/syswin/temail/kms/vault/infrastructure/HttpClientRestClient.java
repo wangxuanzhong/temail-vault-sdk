@@ -6,6 +6,8 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import com.google.gson.Gson;
 import com.syswin.temail.kms.vault.RestClient;
 import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
+import java.io.ByteArrayOutputStream;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 
 public class HttpClientRestClient implements RestClient {
@@ -21,17 +23,29 @@ public class HttpClientRestClient implements RestClient {
   public <REQUEST, RESPONSE> RESPONSE post(String path, REQUEST request, Class<RESPONSE> classType) {
     String url = baseUrl + path;
     try {
-      String json = Request.Post(url)
+      HttpResponse response = Request.Post(url)
           .useExpectContinue()
           .version(HTTP_1_1)
           .bodyString(gson.toJson(request), APPLICATION_JSON)
           .execute()
-          .returnContent()
-          .asString();
+          .returnResponse();
+
+      int statusCode = response.getStatusLine().getStatusCode();
+      if (statusCode != 200) {
+        throw new VaultCipherException(errorMessage(url) + ", status code = " + statusCode);
+      }
+
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      response.getEntity().writeTo(outputStream);
+      String json = outputStream.toString();
 
       return gson.fromJson(json, classType);
     } catch (Exception e) {
-      throw new VaultCipherException("Failed to fetch content from remote url: " + url, e);
+      throw new VaultCipherException(errorMessage(url), e);
     }
+  }
+
+  private String errorMessage(String url) {
+    return "Failed to fetch content from remote url: " + url;
   }
 }

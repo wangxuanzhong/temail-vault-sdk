@@ -25,25 +25,25 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
   }
 
   @Override
-  public byte[] encrypt(byte[] publicKey, String plaintext) {
+  public String encrypt(String publicKey, String plaintext) {
     // TODO: 2018/9/20 all others are base64 encoded by C++ except encrypted bytes
-    return Base64.getEncoder().encode(cipher.encrypt(publicKey, plaintext));
+    return Base64.getEncoder().encodeToString(cipher.encrypt(publicKey.getBytes(), plaintext));
   }
 
   @Override
-  public String decrypt(byte[] privateKey, byte[] encryptedBytes) {
-    return new String(cipher.decrypt(privateKey, Base64.getDecoder().decode(encryptedBytes)), UTF_8);
+  public String decrypt(String privateKey, String encrypted) {
+    return new String(cipher.decrypt(privateKey.getBytes(), Base64.getDecoder().decode(encrypted)), UTF_8);
   }
 
   @Override
-  public byte[] sign(byte[] privateKey, String plaintext) {
-    return cipher.sign(privateKey, plaintext);
+  public String sign(String privateKey, String plaintext) {
+    return new String(cipher.sign(privateKey.getBytes(), plaintext), UTF_8);
   }
 
   @Override
-  public boolean verify(byte[] publicKey, String plaintext, byte[] signature) {
+  public boolean verify(String publicKey, String plaintext, String signature) {
     try {
-      return cipher.verify(publicKey, plaintext, signature);
+      return cipher.verify(publicKey.getBytes(), plaintext, signature.getBytes());
     } catch (Exception e) {
       LOG.error("Failed to verify signature of [{}]", plaintext, e);
       return false;

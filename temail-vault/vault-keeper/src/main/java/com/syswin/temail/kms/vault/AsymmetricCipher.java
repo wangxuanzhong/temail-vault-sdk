@@ -5,13 +5,13 @@ public interface AsymmetricCipher {
 
   KeyPair getKeyPair();
 
-  byte[] encrypt(byte[] publicKey, String plaintext);
+  String encrypt(String publicKey, String plaintext);
 
-  String decrypt(byte[] privateKey, byte[] encryptedBytes);
+  String decrypt(String privateKey, String encrypted);
 
-  byte[] sign(byte[] privateKey, String plaintext);
+  String sign(String privateKey, String plaintext);
 
-  boolean verify(byte[] publicKey, String plaintext, byte[] signature);
+  boolean verify(String publicKey, String plaintext, String signature);
 
   CipherAlgorithm algorithm();
 }
