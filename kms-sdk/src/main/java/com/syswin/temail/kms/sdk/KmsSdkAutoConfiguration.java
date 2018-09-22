@@ -25,8 +25,8 @@ public class KmsSdkAutoConfiguration {
   }
 
   @Bean
-  public VaultKeeper vaultKeeper(ICache kmsCache, @Value("${temail.vault.registry.url}") String baseUrl) {
-    return new VaultKeeper(baseUrl, UUID.randomUUID().toString(), kmsCache);
+  public VaultKeeper vaultKeeper(@Value("${temail.vault.registry.url}") String baseUrl) {
+    return new VaultKeeper(baseUrl, UUID.randomUUID().toString());
   }
 
   @Bean

@@ -1,6 +1,7 @@
 package com.syswin.temail.kms.vault;
 
 import static com.syswin.temail.kms.vault.CipherAlgorithm.SM2;
+import static com.syswin.temail.kms.vault.VaultKeeper.KEY_VAULT_CACHE_ENTRIES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -24,5 +25,12 @@ public class VaultKeeperTest {
   public void shouldUseSM2Cipher() {
     KeyAwareAsymmetricCipher asymmetricCipher = vaultKeeper.asymmetricCipher(SM2);
     assertThat(asymmetricCipher).isEqualTo(cipher);
+  }
+
+  @Test
+  public void doesNotBlowIfSettingCacheEntriesWrong() {
+    System.setProperty(KEY_VAULT_CACHE_ENTRIES, "x");
+    vaultKeeper = new VaultKeeper(Collections.singletonList(cipher));
+    System.clearProperty(KEY_VAULT_CACHE_ENTRIES);
   }
 }
