@@ -8,7 +8,7 @@ public interface KeyAwareCipher {
    * 根据用户ID获取对应密钥进行加密
    * @param userId 账户ID e.g. temail地址
    * @param plaintext 待加密的明文
-   * @return 明文加密后对应的密文
+   * @return 明文加密后对应的密文Base64编码
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
   String encrypt(String userId, String plaintext);
@@ -16,7 +16,7 @@ public interface KeyAwareCipher {
   /**
    * 根据用户ID获取对应密钥进行解密
    * @param userId 账户ID e.g. temail地址
-   * @param encryptedBytes 待解密的密文
+   * @param encryptedBytes 待解密的密文Base64编码
    * @return 解密后的明文
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
@@ -26,7 +26,7 @@ public interface KeyAwareCipher {
    * 根据用户ID获取对应密钥进行签名
    * @param userId 账户ID e.g. temail地址
    * @param plaintext 用于签名的明文
-   * @return 明文对应的签名
+   * @return 明文对应的签名Base64编码
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */
   String sign(String userId, String plaintext);
@@ -35,7 +35,7 @@ public interface KeyAwareCipher {
    * 根据用户ID获取对应密钥进行验签
    * @param userId 账户ID e.g. temail地址
    * @param plaintext 用于签名的明文
-   * @param signed 待验签的签名
+   * @param signed 待验签的签名Base64编码
    * @return 签名是否与明文匹配
    * @throws VaultCipherException 因密钥不正确或用户未注册时抛出异常
    */

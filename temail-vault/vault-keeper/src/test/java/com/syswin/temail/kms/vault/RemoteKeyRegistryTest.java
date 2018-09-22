@@ -74,7 +74,7 @@ public class RemoteKeyRegistryTest {
   @Test
   public void blowsUpIfNoPublicKey() {
     when(restClient.post(PATH_REGISTRATION, request, Response.class))
-        .thenReturn(new Response(200, null, new KeyPair(privateKey, null)));
+        .thenReturn(new Response(200, null, new KeyPair(new String(privateKey), null)));
 
     try {
       cache.register(tenantId, userId);
@@ -89,7 +89,7 @@ public class RemoteKeyRegistryTest {
   @Test
   public void blowsUpIfNoPrivateKey() {
     when(restClient.post(PATH_REGISTRATION, request, Response.class))
-        .thenReturn(new Response(200, null, new KeyPair(null, privateKey)));
+        .thenReturn(new Response(200, null, new KeyPair(null, new String(publicKey))));
 
     try {
       cache.register(tenantId, userId);

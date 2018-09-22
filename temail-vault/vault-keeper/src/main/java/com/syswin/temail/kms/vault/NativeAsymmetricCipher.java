@@ -21,28 +21,40 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
   @Override
   public KeyPair getKeyPair() {
     CipherJni.KeyPair keyPair = cipher.generateKeyPair();
-    return new KeyPair(keyPair.privateKey(), keyPair.publicKey());
+    KeyPair result = new KeyPair(keyPair.privateKey(), keyPair.publicKey());
+    LOG.info("Generated key pair with public key [{}]", result.getPublic());
+    return result;
   }
 
   @Override
   public String encrypt(String publicKey, String plaintext) {
+    LOG.debug("Encrypting plaintext with public key [{}]", publicKey);
     // TODO: 2018/9/20 all others are base64 encoded by C++ except encrypted bytes
-    return Base64.getEncoder().encodeToString(cipher.encrypt(publicKey.getBytes(), plaintext));
+    final String encrypted = Base64.getEncoder().encodeToString(cipher.encrypt(publicKey.getBytes(), plaintext));
+    LOG.info("Encrypted plaintext with public key [{}] to [{}]", publicKey, encrypted);
+    return encrypted;
   }
 
   @Override
   public String decrypt(String privateKey, String encrypted) {
-    return new String(cipher.decrypt(privateKey.getBytes(), Base64.getDecoder().decode(encrypted)), UTF_8);
+    LOG.debug("Decrypting secret text [{}]", encrypted);
+    final String plaintext = new String(cipher.decrypt(privateKey.getBytes(), Base64.getDecoder().decode(encrypted)), UTF_8);
+    LOG.info("Decrypted secret text [{}]", encrypted);
+    return plaintext;
   }
 
   @Override
   public String sign(String privateKey, String plaintext) {
-    return new String(cipher.sign(privateKey.getBytes(), plaintext), UTF_8);
+    LOG.debug("Signing plaintext [{}]", plaintext);
+    final String signature = new String(cipher.sign(privateKey.getBytes(), plaintext), UTF_8);
+    LOG.info("Signed plaintext [{}] with signature [{}]", plaintext, signature);
+    return signature;
   }
 
   @Override
   public boolean verify(String publicKey, String plaintext, String signature) {
     try {
+      LOG.debug("Verified signature [{}] with plaintext [{}]", signature, plaintext);
       return cipher.verify(publicKey.getBytes(), plaintext, signature.getBytes());
     } catch (Exception e) {
       LOG.error("Failed to verify signature of [{}]", plaintext, e);

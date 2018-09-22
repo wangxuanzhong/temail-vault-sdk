@@ -1,6 +1,5 @@
 package com.syswin.temail.kms.vault;
 
-import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import java.util.Optional;
 
 public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCipher {
@@ -23,11 +22,12 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
 
   @Override
   public Optional<String> publicKey(String userId) {
-    KeyPair keyPair = keyRegistry.retrieve(tenantId, userId);
-    if (keyPair == null) {
+    try {
+      KeyPair keyPair = keyRegistry.retrieve(tenantId, userId);
+      return Optional.of(keyPair.getPublic());
+    } catch (Exception e) {
       return Optional.empty();
     }
-    return Optional.of(keyPair.getPublic());
   }
 
   @Override
@@ -61,10 +61,6 @@ public class DelegatingKeyAwareAsymmetricCipher implements KeyAwareAsymmetricCip
   }
 
   private KeyPair keyPair(String userId) {
-    KeyPair keyPair = keyRegistry.retrieve(tenantId, userId);
-    if (keyPair == null) {
-      throw new VaultCipherException("No such user registered: " + userId);
-    }
-    return keyPair;
+    return keyRegistry.retrieve(tenantId, userId);
   }
 }

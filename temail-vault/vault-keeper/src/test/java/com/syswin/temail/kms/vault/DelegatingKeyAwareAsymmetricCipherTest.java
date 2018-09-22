@@ -79,14 +79,10 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
     verify(vaultCipher, never()).getKeyPair();
   }
 
-  @Test
+  @Test (expected = VaultCipherException.class)
   public void blowsUpIfNoSuchUserRegistered() {
-    try {
-      keyAwareCipher.decrypt(userId, encrypted);
-      expectFailing(VaultCipherException.class);
-    } catch (VaultCipherException e) {
-      assertThat(e).hasMessage("No such user registered: " + userId);
-    }
+    when(keyRegistry.retrieve(tenantId, userId)).thenThrow(VaultCipherException.class);
+    keyAwareCipher.decrypt(userId, encrypted);
   }
 
   @Test
@@ -105,6 +101,16 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
     Optional<String> publicKey = keyAwareCipher.publicKey(userId);
 
     assertThat(publicKey).contains(this.publicKey);
+    verify(vaultCipher, never()).getKeyPair();
+  }
+
+  @Test
+  public void shouldGetNothingOfNonExistingUser() {
+    when(keyRegistry.retrieve(tenantId, userId)).thenThrow(VaultCipherException.class);
+
+    Optional<String> publicKey = keyAwareCipher.publicKey(userId);
+
+    assertThat(publicKey).isNotPresent();
     verify(vaultCipher, never()).getKeyPair();
   }
 

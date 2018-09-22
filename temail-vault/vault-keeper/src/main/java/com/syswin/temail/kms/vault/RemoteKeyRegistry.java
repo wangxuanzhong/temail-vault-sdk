@@ -2,8 +2,12 @@ package com.syswin.temail.kms.vault;
 
 import com.syswin.temail.kms.vault.cache.ICache;
 import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
+import java.lang.invoke.MethodHandles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class RemoteKeyRegistry implements KeyRegistry {
+  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   static final String PATH_REGISTRATION = "/asymmetric/register";
   static final String PATH_RETRIEVE = "/asymmetric/key";
@@ -20,12 +24,14 @@ class RemoteKeyRegistry implements KeyRegistry {
 
   @Override
   public KeyPair register(String tenantId, String key) {
+    LOG.debug("Registering user {} at path {}", key, PATH_REGISTRATION);
     Response response = restClient.post(PATH_REGISTRATION, new Request(tenantId, key, algorithm), Response.class);
 
     validateResponse(response);
 
     KeyPair keyPair = response.getKeyPair();
     cache.put(key, keyPair);
+    LOG.info("Registered user {} at path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
     return keyPair;
   }
 
@@ -34,12 +40,16 @@ class RemoteKeyRegistry implements KeyRegistry {
     KeyPair keyPair = cache.get(key);
 
     if (keyPair == null) {
+      LOG.debug("No such user {} found locally and retrieving from path {}", key, PATH_RETRIEVE);
       Response response = restClient.post(PATH_RETRIEVE, new Request(tenantId, key, algorithm), Response.class);
 
       validateResponse(response);
 
       keyPair = response.getKeyPair();
       cache.put(key, keyPair);
+      LOG.info("Retrieved user {} from path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
+    } else {
+      LOG.info("Retrieved user {} locally with public key [{}]", key, keyPair.getPublic());
     }
     return keyPair;
   }

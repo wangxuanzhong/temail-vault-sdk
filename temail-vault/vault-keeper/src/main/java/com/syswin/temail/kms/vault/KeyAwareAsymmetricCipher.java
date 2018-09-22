@@ -8,7 +8,7 @@ public interface KeyAwareAsymmetricCipher extends KeyAwareCipher {
   /**
    * 账户注册，使用其他非对称接口前须先注册
    * @param userId 账户ID e.g. temail地址
-   * @return 该账户对应的公钥
+   * @return 该账户对应的公钥Base64编码
    * @throws VaultCipherException 注册账户时或生成密钥失败抛出
    */
   String register(String userId);
@@ -16,7 +16,7 @@ public interface KeyAwareAsymmetricCipher extends KeyAwareCipher {
   /**
    * 根据账户ID获取对应公钥
    * @param userId 账户ID e.g. temail地址
-   * @return 该账户对应的公钥，若该账户未注册，则返回 {@link Optional#empty()}
+   * @return 该账户对应的公钥Base64编码，若该账户未注册，则返回 {@link Optional#empty()}
    */
   Optional<String> publicKey(String userId);
 }
