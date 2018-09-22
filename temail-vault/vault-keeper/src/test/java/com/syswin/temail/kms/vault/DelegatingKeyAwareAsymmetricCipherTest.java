@@ -1,8 +1,7 @@
 package com.syswin.temail.kms.vault;
 
-import static com.seanyinx.github.unit.scaffolding.AssertUtils.expectFailing;
 import static com.seanyinx.github.unit.scaffolding.Randomness.uniquify;
-import static com.syswin.temail.kms.vault.CipherAlgorithm.SM2;
+import static com.syswin.temail.kms.vault.CipherAlgorithm.ECDSA;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -87,11 +86,11 @@ public class DelegatingKeyAwareAsymmetricCipherTest {
 
   @Test
   public void shouldUseAlgorithmOfUnderlyingCipher() {
-    when(vaultCipher.algorithm()).thenReturn(SM2);
+    when(vaultCipher.algorithm()).thenReturn(ECDSA);
 
     CipherAlgorithm algorithm = keyAwareCipher.algorithm();
 
-    assertThat(algorithm).isEqualTo(SM2);
+    assertThat(algorithm).isEqualTo(ECDSA);
   }
 
   @Test

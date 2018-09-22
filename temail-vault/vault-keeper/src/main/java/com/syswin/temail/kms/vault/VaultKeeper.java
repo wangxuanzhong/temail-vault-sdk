@@ -1,6 +1,7 @@
 package com.syswin.temail.kms.vault;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 import com.syswin.temail.kms.vault.cache.EmbeddedCache;
 import com.syswin.temail.kms.vault.cache.ICache;
@@ -12,32 +13,52 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class VaultKeeper {
+public final class VaultKeeper implements KeyAwareAsymmetricVaultKeeper {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int DEFAULT_CACHE_ENTRIES = 1000;
   static final String KEY_VAULT_CACHE_ENTRIES = "temail.vault.cache.entries";
 
-  private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> asymmetricCiphers;
+  private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> keyAwareAsymmetricCiphers;
+  private final Map<CipherAlgorithm, AsymmetricCipher> asymmetricCiphers;
 
+  public static KeyAwareAsymmetricVaultKeeper keyAwareVaultKeeper(String kmsBaseUrl, String tenantId) {
+    return new VaultKeeper(kmsBaseUrl, tenantId);
+  }
+
+  public static AsymmetricVaultKeeper vaultKeeper() {
+    return new VaultKeeper(emptyList(), asList(new NativeAsymmetricCipher()));
+  }
+
+  @Deprecated
   public VaultKeeper(String kmsBaseUrl, String tenantId) {
     this(kmsBaseUrl, tenantId, new EmbeddedCache(entries()), new NativeAsymmetricCipher());
   }
 
   private VaultKeeper(String baseUrl, String tenantId, ICache iCache, AsymmetricCipher cipher) {
     this(asList(new DelegatingKeyAwareAsymmetricCipher(
-        tenantId,
-        cipher,
-        new RemoteKeyRegistry(iCache, new HttpClientRestClient(baseUrl), cipher.algorithm()))));
+            tenantId,
+            cipher,
+            new RemoteKeyRegistry(iCache, new HttpClientRestClient(baseUrl), cipher.algorithm()))),
+        asList(cipher));
   }
 
-  VaultKeeper(Collection<KeyAwareAsymmetricCipher> asymmetricCiphers) {
+  VaultKeeper(Collection<KeyAwareAsymmetricCipher> keyAwareAsymmetricCiphers, Collection<AsymmetricCipher> asymmetricCiphers) {
+    this.keyAwareAsymmetricCiphers = new HashMap<>();
+    keyAwareAsymmetricCiphers.forEach(cipher -> this.keyAwareAsymmetricCiphers.put(cipher.algorithm(), cipher));
+
     this.asymmetricCiphers = new HashMap<>();
     asymmetricCiphers.forEach(cipher -> this.asymmetricCiphers.put(cipher.algorithm(), cipher));
   }
 
+  @Override
   public KeyAwareAsymmetricCipher asymmetricCipher(CipherAlgorithm algorithm) {
+    return keyAwareAsymmetricCiphers.get(algorithm);
+  }
+
+  @Override
+  public PublicKeyCipher publicKeyCipher(CipherAlgorithm algorithm) {
     return asymmetricCiphers.get(algorithm);
   }
 

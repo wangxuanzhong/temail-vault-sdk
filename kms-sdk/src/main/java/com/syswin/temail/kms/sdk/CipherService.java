@@ -1,15 +1,12 @@
 package com.syswin.temail.kms.sdk;
 
-import static com.syswin.temail.kms.sdk.utils.CoderUtils.decoder;
-import static com.syswin.temail.kms.sdk.utils.CoderUtils.encoder;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.syswin.temail.kms.sdk.dto.AsymmetricDto;
 import com.syswin.temail.kms.sdk.dto.SymmetricDto;
 import com.syswin.temail.kms.sdk.exception.KmsException;
 import com.syswin.temail.kms.vault.CipherAlgorithm;
-import com.syswin.temail.kms.vault.VaultKeeper;
+import com.syswin.temail.kms.vault.KeyAwareAsymmetricVaultKeeper;
 import com.syswin.temail.kms.vault.aes.AESCipher;
 import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import java.util.HashMap;
@@ -32,10 +29,10 @@ class CipherService {
   public static final String ECDSA = "ECDSA";
   private final KmsProperties kmsProperties;
   private final RestTemplate restTemplate;
-  private final VaultKeeper vaultKeeper;
+  private final KeyAwareAsymmetricVaultKeeper vaultKeeper;
   private final SymmetricCipher symmetricCipher = new AESCipher();
 
-  public CipherService(KmsProperties kmsProperties, RestTemplate restTemplate, VaultKeeper vaultKeeper) {
+  public CipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareAsymmetricVaultKeeper vaultKeeper) {
     this.kmsProperties = kmsProperties;
     this.restTemplate = restTemplate;
     this.vaultKeeper = vaultKeeper;
