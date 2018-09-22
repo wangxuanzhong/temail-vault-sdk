@@ -3,6 +3,8 @@ package com.syswin.temail.kms.vault;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
+import com.syswin.temail.kms.vault.aes.AESCipher;
+import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import com.syswin.temail.kms.vault.cache.EmbeddedCache;
 import com.syswin.temail.kms.vault.cache.ICache;
 import com.syswin.temail.kms.vault.infrastructure.HttpClientRestClient;
@@ -13,7 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class VaultKeeper implements KeyAwareAsymmetricVaultKeeper {
+public final class VaultKeeper implements KeyAwareVault {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -22,12 +24,13 @@ public final class VaultKeeper implements KeyAwareAsymmetricVaultKeeper {
 
   private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> keyAwareAsymmetricCiphers;
   private final Map<CipherAlgorithm, AsymmetricCipher> asymmetricCiphers;
+  private final SymmetricCipher symmetricCipher;
 
-  public static KeyAwareAsymmetricVaultKeeper keyAwareVaultKeeper(String kmsBaseUrl, String tenantId) {
+  public static KeyAwareVault keyAwareVault(String kmsBaseUrl, String tenantId) {
     return new VaultKeeper(kmsBaseUrl, tenantId);
   }
 
-  public static AsymmetricVaultKeeper vaultKeeper() {
+  public static Vault vault() {
     return new VaultKeeper(emptyList(), asList(new NativeAsymmetricCipher()));
   }
 
@@ -50,6 +53,8 @@ public final class VaultKeeper implements KeyAwareAsymmetricVaultKeeper {
 
     this.asymmetricCiphers = new HashMap<>();
     asymmetricCiphers.forEach(cipher -> this.asymmetricCiphers.put(cipher.algorithm(), cipher));
+
+    this.symmetricCipher = new AESCipher();
   }
 
   @Override
@@ -60,6 +65,11 @@ public final class VaultKeeper implements KeyAwareAsymmetricVaultKeeper {
   @Override
   public PublicKeyCipher publicKeyCipher(CipherAlgorithm algorithm) {
     return asymmetricCiphers.get(algorithm);
+  }
+
+  @Override
+  public SymmetricCipher symmetricCipher() {
+    return symmetricCipher;
   }
 
   private static int entries() {

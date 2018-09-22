@@ -2,7 +2,7 @@ package com.syswin.temail.kms.sdk;
 
 import com.syswin.temail.kms.sdk.condition.UnWindowsCondition;
 import com.syswin.temail.kms.sdk.condition.WindowsCondition;
-import com.syswin.temail.kms.vault.KeyAwareAsymmetricVaultKeeper;
+import com.syswin.temail.kms.vault.KeyAwareVault;
 import com.syswin.temail.kms.vault.VaultKeeper;
 import com.syswin.temail.kms.vault.cache.ICache;
 import java.util.UUID;
@@ -29,8 +29,8 @@ public class KmsSdkAutoConfiguration {
   }
 
   @Bean
-  public KeyAwareAsymmetricVaultKeeper vaultKeeper(@Value("${temail.vault.registry.url}") String baseUrl) {
-    return VaultKeeper.keyAwareVaultKeeper(baseUrl, UUID.randomUUID().toString());
+  public KeyAwareVault vaultKeeper(@Value("${temail.vault.registry.url}") String baseUrl) {
+    return VaultKeeper.keyAwareVault(baseUrl, UUID.randomUUID().toString());
   }
 
   @Bean
@@ -40,14 +40,14 @@ public class KmsSdkAutoConfiguration {
 
   @Bean
   @Conditional(WindowsCondition.class)
-  public CipherService winCipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareAsymmetricVaultKeeper vaultKeeper) {
+  public CipherService winCipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareVault vaultKeeper) {
     return new NullCipherService(kmsProperties, restTemplate, vaultKeeper);
   }
 
 
   @Bean
   @Conditional(UnWindowsCondition.class)
-  public CipherService cipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareAsymmetricVaultKeeper vaultKeeper) {
+  public CipherService cipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareVault vaultKeeper) {
     return new CipherService(kmsProperties, restTemplate, vaultKeeper);
   }
 

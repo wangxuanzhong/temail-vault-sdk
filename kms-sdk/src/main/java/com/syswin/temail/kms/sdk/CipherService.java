@@ -6,7 +6,7 @@ import com.syswin.temail.kms.sdk.dto.AsymmetricDto;
 import com.syswin.temail.kms.sdk.dto.SymmetricDto;
 import com.syswin.temail.kms.sdk.exception.KmsException;
 import com.syswin.temail.kms.vault.CipherAlgorithm;
-import com.syswin.temail.kms.vault.KeyAwareAsymmetricVaultKeeper;
+import com.syswin.temail.kms.vault.KeyAwareVault;
 import com.syswin.temail.kms.vault.aes.AESCipher;
 import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import java.util.HashMap;
@@ -29,10 +29,10 @@ class CipherService {
   public static final String ECDSA = "ECDSA";
   private final KmsProperties kmsProperties;
   private final RestTemplate restTemplate;
-  private final KeyAwareAsymmetricVaultKeeper vaultKeeper;
+  private final KeyAwareVault vaultKeeper;
   private final SymmetricCipher symmetricCipher = new AESCipher();
 
-  public CipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareAsymmetricVaultKeeper vaultKeeper) {
+  public CipherService(KmsProperties kmsProperties, RestTemplate restTemplate, KeyAwareVault vaultKeeper) {
     this.kmsProperties = kmsProperties;
     this.restTemplate = restTemplate;
     this.vaultKeeper = vaultKeeper;

@@ -1,14 +1,14 @@
 package com.syswin.temail.kms.sdk;
 
 import com.syswin.temail.kms.sdk.dto.AsymmetricDto;
-import com.syswin.temail.kms.vault.KeyAwareAsymmetricVaultKeeper;
+import com.syswin.temail.kms.vault.KeyAwareVault;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.client.RestTemplate;
 
 class NullCipherService extends CipherService {
 
   public NullCipherService(KmsProperties kmsProperties, RestTemplate restTemplate,
-      KeyAwareAsymmetricVaultKeeper vaultKeeper) {
+      KeyAwareVault vaultKeeper) {
     super(kmsProperties, restTemplate, vaultKeeper);
   }
 
