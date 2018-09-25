@@ -18,6 +18,11 @@
   cipher.encrypt("sean@t.email", "hello world");
   // ...
 ```
+1. 添加环境变量
+```
+export JAVA_HOME=/usr/local/jdk1.8.0_161
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
+```
 
 ## 本地测试
 **注意：当前本地测试只支持LINUX和MAC**
@@ -47,7 +52,13 @@ make -j$(nproc) && make install
 ```
 
 ### C++ LINKER版本过低
-如需编译C++算法源码，需安装 `ld-2.31`
+如需编译C++算法源码，需安装 `ld-2.31` 及 `libuuid-devel`
+* 安装 `libuuid` 
+```
+yum -y install libuuid-devel
+```
+
+* 安装 `ld`
 ```
 wget https://mirrors.tuna.tsinghua.edu.cn/gnu/binutils/binutils-2.31.tar.gz
 tar xzvf binutils-2.31.tar.gz
