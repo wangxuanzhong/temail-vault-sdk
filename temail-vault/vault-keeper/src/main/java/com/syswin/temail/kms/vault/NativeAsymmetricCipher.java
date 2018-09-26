@@ -9,12 +9,12 @@ import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class NativeAsymmetricCipher implements AsymmetricCipher {
+public class NativeAsymmetricCipher implements AsymmetricCipher {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final CipherJni cipher;
 
-  NativeAsymmetricCipher() {
+  public NativeAsymmetricCipher() {
     cipher = new CipherJni();
   }
 
