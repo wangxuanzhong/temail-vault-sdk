@@ -40,7 +40,8 @@
             <compilerStartOption>-I ${JAVA_HOME}/include/</compilerStartOption>
             <compilerStartOption>-I ${JAVA_HOME}/include/linux/</compilerStartOption>
             <compilerStartOption>-I ${JAVA_HOME}/include/darwin/</compilerStartOption>
-            <compilerStartOption>-I ${basedir}/src/main/cpp/thirdpart</compilerStartOption>
+            <compilerStartOption>-I /usr/local/opt/openssl/include</compilerStartOption>
+            <!--<compilerStartOption>-I ${basedir}/src/main/cpp/thirdpart</compilerStartOption>-->
           </compilerStartOptions>
           <compilerEndOptions>
             <compilerEndOption>-fPIC</compilerEndOption>
@@ -50,10 +51,11 @@
             <linkerStartOption>-I ${JAVA_HOME}/include/</linkerStartOption>
             <linkerStartOption>-I ${JAVA_HOME}/include/linux/</linkerStartOption>
             <linkerStartOption>-I ${JAVA_HOME}/include/darwin/</linkerStartOption>
-            <linkerStartOption>-L ${basedir}/src/main/cpp/thirdpart/lib/linux</linkerStartOption>
           </linkerStartOptions>
           <linkerEndOptions>
-            <linkerEndOption>-Wl,--whole-archive ${basedir}/src/main/cpp/thirdpart/lib/linux/libcrypto.a ${basedir}/src/main/cpp/thirdpart/lib/linux/libssl.a -Wl,--no-whole-archive</linkerEndOption>
+            <linkerEndOption>-L /usr/local/opt/openssl/lib</linkerEndOption>
+            <!--<linkerEndOption>-L ${basedir}/src/main/cpp/thirdpart/lib/linux</linkerEndOption>-->
+            <!--<linkerEndOption>-Wl,&#45;&#45;whole-archive ${basedir}/src/main/cpp/thirdpart/lib/linux/libcrypto.a ${basedir}/src/main/cpp/thirdpart/lib/linux/libssl.a -Wl,&#45;&#45;no-whole-archive</linkerEndOption>-->
             <linkerEndOption>-shared</linkerEndOption>
             <linkerEndOption>-fPIC</linkerEndOption>
             <linkerEndOption>-lstdc++</linkerEndOption>
