@@ -15,6 +15,12 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import com.syswin.temail.kms.vault.infrastructure.HttpClientRestClient;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -89,6 +95,39 @@ public class RestClientTest {
 
     assertThat(keyPair.getPublic()).isEqualTo("abc");
     assertThat(keyPair.getPrivate()).isEqualTo("xyz");
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void reuseConnections() throws ExecutionException, InterruptedException {
+    int threads = 5;
+    ExecutorService executorService = Executors.newFixedThreadPool(threads);
+
+    CyclicBarrier barrier = new CyclicBarrier(threads);
+    CompletableFuture<Response>[] futures = new CompletableFuture[threads];
+    for (int i = 0; i < threads; i++) {
+      futures[i] = CompletableFuture.supplyAsync(() -> {
+        try {
+          barrier.await();
+          return restClient.post(path, new Request(tenantId, "hello@t.email", ECDSA), Response.class);
+        } catch (InterruptedException | BrokenBarrierException e) {
+          throw new IllegalStateException(e);
+        }
+      }, executorService);
+    }
+
+    CompletableFuture.allOf(futures).join();
+    for (int i = 0; i < threads; i++) {
+      Response response = futures[i].get();
+
+      assertThat(response.getCode()).isEqualTo(200);
+      KeyPair keyPair = response.getKeyPair();
+
+      assertThat(keyPair.getPublic()).isEqualTo("abc");
+      assertThat(keyPair.getPrivate()).isEqualTo("xyz");
+    }
+
+    executorService.shutdownNow();
   }
 
   @Test(expected = VaultCipherException.class)
