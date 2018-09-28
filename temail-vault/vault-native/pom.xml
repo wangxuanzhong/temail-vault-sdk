@@ -141,6 +141,64 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <compilerProvider>generic-classic</compilerProvider>
+              <compilerExecutable>g++</compilerExecutable>
+              <linkerExecutable>g++</linkerExecutable>
+              <sources>
+                <source>
+                  <directory>${basedir}/src/main/cpp/jni</directory>
+                  <fileNames>
+                    <fileName>CipherJni.cpp</fileName>
+                  </fileNames>
+                </source>
+                <source>
+                  <directory>${basedir}/src/main/cpp/include</directory>
+                </source>
+                <source>
+                  <directory>${basedir}/src/main/cpp/</directory>
+                  <fileNames>
+                    <fileName>ecc_vault_cipher.cpp</fileName>
+                  </fileNames>
+                </source>
+              </sources>
+              <compilerStartOptions>
+                <compilerStartOption>-I ${JAVA_HOME}/include/</compilerStartOption>
+                <compilerStartOption>-I ${JAVA_HOME}/include/win32/</compilerStartOption>
+              </compilerStartOptions>
+              <compilerEndOptions>
+                <compilerEndOption>-fPIC</compilerEndOption>
+                <compilerEndOption>-std=gnu++11</compilerEndOption>
+              </compilerEndOptions>
+              <linkerStartOptions>
+                <linkerStartOption>-L ${JAVA_HOME}/lib/</linkerStartOption>
+                <linkerStartOption>-L C:/OpenSSL-x64/lib/</linkerStartOption>
+              </linkerStartOptions>
+              <linkerEndOptions>
+                <linkerEndOption>-shared</linkerEndOption>
+                <linkerEndOption>-fPIC</linkerEndOption>
+                <linkerEndOption>-lstdc++</linkerEndOption>
+                <linkerEndOption>-lssl</linkerEndOption>
+                <linkerEndOption>-lcrypto</linkerEndOption>
+              </linkerEndOptions>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>

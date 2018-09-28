@@ -27,12 +27,22 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
 ## 本地测试
 **注意：当前本地测试只支持LINUX和MAC**
 
-1. 注释 `vault-native/pom.xml` 中以下行
-```
-<linkerEndOption>-luuid</linkerEndOption>
-```
+### Mac编译步骤
 1. 运行 `mvn package -DskipTests`
-1. 将 `libecc.dylib` 放入 `/usr/local/lib` 
+
+### Windows编译步骤
+1. 安装 `GitBash`
+1. 安装 `Mingw64`
+1. 安装 [`Perl`](http://strawberryperl.com/)
+1. 下载 [`OpenSSL`](https://www.openssl.org/)
+1. 在 `GitBash` 中编译 `OpenSSL`
+  ```
+  export PATH=$PATH:<mingw64 folder>/bin
+  perl Configure mingw64 no-shared no-asm --prefix=/C/OpenSSL-x64
+  mingw32-make.exe depend
+  mingw32-make.exe
+  mingw32-make.exe install
+  ```
 
 ## FAQ
 ### C++ 编译器版本过低
