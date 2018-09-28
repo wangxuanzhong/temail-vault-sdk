@@ -15,15 +15,17 @@ public class NativeAsymmetricCipherTest {
 
   @Test
   public void shouldGenerateKeyPair() {
-    assertThat(keyPair.getPublic()).isEqualTo("hello");
-    assertThat(keyPair.getPrivate()).isEqualTo("world");
+    assertThat(keyPair.getPublic()).isNotNull();
+    assertThat(keyPair.getPrivate()).isNotNull();
   }
 
   @Test
   public void shouldEncrypt() {
     String encrypted = cipher.encrypt(keyPair.getPublic(), "Sean");
+    assertThat(encrypted).isNotNull();
 
-    assertThat(encrypted).isEqualTo("hello Sean");
+    String plaintext = cipher.decrypt(keyPair.getPrivate(), encrypted);
+    assertThat(plaintext).isEqualTo("Sean");
   }
 
   @Test
@@ -32,30 +34,19 @@ public class NativeAsymmetricCipherTest {
       cipher.encrypt("blah", "Sean");
       expectFailing(VaultCipherException.class);
     } catch (VaultCipherException e) {
-      assertThat(e).hasMessage("Failed to encrypt text");
+      assertThat(e).hasMessage("Invalid public or private key");
     }
-  }
-
-  @Test
-  public void shouldDecrypt() {
-    String plaintext = cipher.decrypt(keyPair.getPrivate(), "Sean");
-
-    assertThat(plaintext).isEqualTo("Sean's world");
   }
 
   @Test
   public void shouldSign() {
     String signature = cipher.sign(keyPair.getPrivate(), "Sean");
+    assertThat(signature).isNotNull();
 
-    assertThat(signature).isEqualTo("world of Sean");
-  }
-
-  @Test
-  public void shouldVerify() {
-    boolean verified = cipher.verify(keyPair.getPublic(), "Sean", "Sean");
+    boolean verified = cipher.verify(keyPair.getPublic(), "Sean", signature);
     assertThat(verified).isTrue();
 
-    verified = cipher.verify(keyPair.getPublic(), "Sean", "Jack");
+    verified = cipher.verify(keyPair.getPublic(), "Jack", signature);
     assertThat(verified).isFalse();
   }
 }

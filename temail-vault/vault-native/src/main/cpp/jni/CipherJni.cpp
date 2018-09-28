@@ -7,7 +7,6 @@
 using namespace std::placeholders;
 
 #include "com_syswin_temail_vault_jni_CipherJni.h"
-#include "fake_vault_cipher.h"
 #include "ecc_vault_cipher.h"
 
 #define JAVA_CIPHER_CLASS_NAME "com/syswin/temail/vault/jni/CipherJni"

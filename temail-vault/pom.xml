@@ -17,7 +17,7 @@
     <module>vault-native</module>
     <module>vault-jni</module>
     <module>vault-keeper</module>
-    <!--<module>vault-algo-ecc</module>-->
+    <module>libecc</module>
   </modules>
 
   <dependencyManagement>
@@ -30,6 +30,12 @@
       <dependency>
         <groupId>com.syswin.temail</groupId>
         <artifactId>vault-jni</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.syswin.temail</groupId>
+        <artifactId>libecc</artifactId>
+        <type>a</type>
         <version>1.0.0-SNAPSHOT</version>
       </dependency>
     </dependencies>

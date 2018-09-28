@@ -9,7 +9,7 @@ public class CipherJni {
     try {
       try {
         final NativeUtils nativeUtils = new NativeUtils("vault");
-        nativeUtils.extractLibraryFromJar("/libecc.a");
+        nativeUtils.extractLibraryFromJar("/native/libecc.a");
         nativeUtils.extractLibraryFromJar("/libcrypto.a");
         nativeUtils.extractLibraryFromJar("/libssl.a");
         nativeUtils.loadLibraryFromJar("/native/libVault.so");
