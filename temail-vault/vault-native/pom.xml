@@ -12,6 +12,14 @@
   <artifactId>vault-native</artifactId>
   <packaging>so</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.syswin.temail</groupId>
+      <artifactId>libecc</artifactId>
+      <type>a</type>
+    </dependency>
+  </dependencies>
+
   <profiles>
     <profile>
       <id>linux</id>
@@ -82,13 +90,6 @@
           <family>mac</family>
         </os>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>com.syswin.temail</groupId>
-          <artifactId>libecc</artifactId>
-          <type>a</type>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
