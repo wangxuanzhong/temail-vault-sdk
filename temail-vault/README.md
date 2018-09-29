@@ -25,9 +25,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
 ```
 
 ## 本地测试
-**注意：当前本地测试只支持LINUX和MAC**
-
-### Mac编译步骤
+### *nux编译步骤
 1. 运行 `mvn package -DskipTests`
 
 ### Windows编译步骤
@@ -43,6 +41,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
   mingw32-make.exe
   mingw32-make.exe install
   ```
+完成以上安装步骤后，运行 `mvn package -DskipTests`
 
 ## FAQ
 ### C++ 编译器版本过低

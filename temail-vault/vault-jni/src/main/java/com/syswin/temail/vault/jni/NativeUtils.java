@@ -50,8 +50,12 @@ class NativeUtils {
   private final File temporaryDir;
 
   NativeUtils(String nativePathPrefix) throws IOException {
-    temporaryDir = createTempDirectory(nativePathPrefix);
-    temporaryDir.deleteOnExit();
+    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+      temporaryDir = new File(System.getProperty("user.dir"));
+    } else {
+      temporaryDir = createTempDirectory(nativePathPrefix);
+      temporaryDir.deleteOnExit();
+    }
   }
 
   File extractLibraryFromJar(String path) throws IOException {
