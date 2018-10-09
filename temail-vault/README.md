@@ -75,3 +75,9 @@ cd binutils-2.31
 ./configure --enable-languages=c,c++ --disable-multilib
 make -j$(nproc) && make install
 ```
+### Mac编译安装
+* 安装 `openssl`
+```
+编译时，需要openssl
+brew install openssl
+```
