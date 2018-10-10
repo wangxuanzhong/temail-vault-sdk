@@ -15,15 +15,15 @@ using namespace std::chrono;
 #define ERR_SIGNORDESIGN_FAILED 10001004
 #define ERR_PARAM_INVALID    10001005
 
-namespace ECC
+namespace ALG
 {
 	typedef std::vector<char> BufferArray;
 
-	long ecc_generateKey(std::string &pubKey,std::string &priKey);
-	long ecc_sign(const char * priKey, const BufferArray &context, BufferArray & sigBuffer);
-	long ecc_verify(const char * pubKey, const BufferArray &context, const BufferArray &sigBuffer);
-	long ecc_encryptData(const char * pubKey, const BufferArray &context, BufferArray &sec_buf);
-	long ecc_decryptData(const char * priKey, const BufferArray &context, BufferArray &text_buf);
+	int64_t ecc_generateKey(std::string &pubKey,std::string &priKey);
+	int64_t ecc_sign(const char * priKey, const BufferArray &context, BufferArray & sigBuffer);
+	int64_t ecc_verify(const char * pubKey, const BufferArray &context, const BufferArray &sigBuffer);
+	int64_t ecc_encryptData(const char * pubKey, const BufferArray &context, BufferArray &sec_buf);
+	int64_t ecc_decryptData(const char * priKey, const BufferArray &context, BufferArray &text_buf);
 }
 
 #endif

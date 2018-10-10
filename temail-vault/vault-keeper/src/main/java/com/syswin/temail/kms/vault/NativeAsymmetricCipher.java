@@ -30,7 +30,7 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
   public String encrypt(String publicKey, String plaintext) {
     LOG.debug("Encrypting plaintext with public key [{}]", publicKey);
     // TODO: 2018/9/20 all others are base64 encoded by C++ except encrypted bytes
-    final String encrypted = Base64.getEncoder().encodeToString(cipher.encrypt(publicKey.getBytes(), plaintext));
+    final String encrypted = new String(cipher.encrypt(publicKey.getBytes(), plaintext));
     LOG.info("Encrypted plaintext with public key [{}] to [{}]", publicKey, encrypted);
     return encrypted;
   }
@@ -38,7 +38,7 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
   @Override
   public String decrypt(String privateKey, String encrypted) {
     LOG.debug("Decrypting secret text [{}]", encrypted);
-    final String plaintext = new String(cipher.decrypt(privateKey.getBytes(), Base64.getDecoder().decode(encrypted)), UTF_8);
+    final String plaintext = new String(cipher.decrypt(privateKey.getBytes(), encrypted.getBytes()), UTF_8);
     LOG.info("Decrypted secret text [{}]", encrypted);
     return plaintext;
   }
