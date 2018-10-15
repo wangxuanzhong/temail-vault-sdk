@@ -52,11 +52,15 @@ public class HttpClientRestClient implements RestClient {
       return gson.fromJson(json, classType);
     } catch (Exception e) {
       LOG.error("Unexpected response from remote url {}", url, e);
-      throw new VaultCipherException(errorMessage(url), e);
+      throw new VaultCipherException(errorMessage(url, e), e);
     }
   }
 
   private String errorMessage(String url) {
     return "Failed to fetch content from remote url: " + url;
+  }
+
+  private String errorMessage(String url, Exception e) {
+    return "Failed to fetch content from remote url: " + url + "," + e.getMessage();
   }
 }
