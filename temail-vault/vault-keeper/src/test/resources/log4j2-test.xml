@@ -3,11 +3,11 @@
   <appenders>
     <!--控制台打印 -->
     <Console name="CONSOLE" target="SYSTEM_OUT">
-      <PatternLayout pattern="[@project.artifactId@] [%date{yyyy-MM-dd HH:mm:ss.SSS}] %highlight{%-5level} [%thread] => %cyan{%logger{1.}} - %msg%n"/>
+      <PatternLayout pattern="[@project.artifactId@] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %highlight{%-5p} => %cyan{%c.%M(%F:%L)} - %m%n"/>
     </Console>
     <!--当日志内容达到指定范围后，以某种定义规则打包日志文件 -->
     <RollingFile name="RollingFile" fileName="/homes/logs/@project.artifactId@.log" filePattern="/homes/logs/@project.artifactId@-logs-%d{MM-dd-yyyy}-%i.log">
-      <PatternLayout pattern="[@project.artifactId@] [%date{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%thread] => %logger{1.} - %msg%n"/>
+      <PatternLayout pattern="[@project.artifactId@] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p => %c.%M(%F:%L) - %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy/>
         <SizeBasedTriggeringPolicy size="50MB"/><!--当日志大小达到50MB时，以上述filePattern定义的格式进行打包压缩 -->
