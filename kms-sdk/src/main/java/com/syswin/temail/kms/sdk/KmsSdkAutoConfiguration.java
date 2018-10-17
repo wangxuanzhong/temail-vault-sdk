@@ -15,7 +15,7 @@ class KmsSdkAutoConfiguration {
 
   @Bean
   @ConditionalOnExpression("!'${app.vault.registry.url}'.isEmpty()")
-  KeyAwareVault vaultKeeper(@Value("${app.vault.registry.url}") String baseUrl, @Value("${temail.vault.registry.token}") String token) {
+  KeyAwareVault vaultKeeper(@Value("${app.vault.registry.url}") String baseUrl, @Value("${app.vault.registry.token}") String token) {
     return VaultKeeper.keyAwareVault(baseUrl, token);
   }
 
