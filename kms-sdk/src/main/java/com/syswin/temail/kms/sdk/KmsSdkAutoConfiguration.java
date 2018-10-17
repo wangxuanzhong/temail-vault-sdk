@@ -14,13 +14,13 @@ import org.springframework.context.annotation.Configuration;
 class KmsSdkAutoConfiguration {
 
   @Bean
-  @ConditionalOnExpression("!'${temail.vault.registry.url}'.isEmpty()")
-  KeyAwareVault vaultKeeper(@Value("${temail.vault.registry.url}") String baseUrl, @Value("${temail.vault.registry.token}") String token) {
+  @ConditionalOnExpression("!'${app.vault.registry.url}'.isEmpty()")
+  KeyAwareVault vaultKeeper(@Value("${app.vault.registry.url}") String baseUrl, @Value("${temail.vault.registry.token}") String token) {
     return VaultKeeper.keyAwareVault(baseUrl, token);
   }
 
   @Bean
-  @ConditionalOnExpression("'${temail.vault.registry.url}'.isEmpty()")
+  @ConditionalOnExpression("'${app.vault.registry.url}'.isEmpty()")
   Vault vault() {
     return VaultKeeper.vault();
   }
