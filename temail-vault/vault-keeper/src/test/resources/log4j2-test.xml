@@ -7,7 +7,7 @@
     </Console>
     <!--当日志内容达到指定范围后，以某种定义规则打包日志文件 -->
     <RollingFile name="RollingFile" fileName="/opt/logs/@project.artifactId@.log" filePattern="/opt/logs/@project.artifactId@-logs-%d{MM-dd-yyyy}-%i.log">
-      <PatternLayout pattern="[@project.artifactId@] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p => %c.%M(%F:%L) - %m%n"/>
+      <PatternLayout pattern="[@project.artifactId@] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p => %c - %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy/>
         <SizeBasedTriggeringPolicy size="50MB"/><!--当日志大小达到50MB时，以上述filePattern定义的格式进行打包压缩 -->
