@@ -124,7 +124,8 @@
                 <compilerEndOption>-std=gnu++11</compilerEndOption>
               </compilerEndOptions>
               <linkerStartOptions>
-                <linkerStartOption>-I ${JAVA_HOME}/lib/</linkerStartOption>
+                <linkerStartOption>-L ${JAVA_HOME}/lib/</linkerStartOption>
+                <linkerStartOption>-L /usr/local/opt/openssl/lib/</linkerStartOption>
               </linkerStartOptions>
               <linkerEndOptions>
                 <linkerEndOption>-shared</linkerEndOption>
