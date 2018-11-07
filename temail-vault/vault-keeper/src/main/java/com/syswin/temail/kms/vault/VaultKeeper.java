@@ -20,7 +20,7 @@ public final class VaultKeeper implements KeyAwareVault {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int DEFAULT_CACHE_ENTRIES = 1000;
-  static final String KEY_VAULT_CACHE_ENTRIES = "temail.vault.cache.entries";
+  static final String KEY_VAULT_CACHE_ENTRIES = "app.vault.cache.entries";
 
   private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> keyAwareAsymmetricCiphers;
   private final Map<CipherAlgorithm, AsymmetricCipher> asymmetricCiphers;
@@ -34,8 +34,7 @@ public final class VaultKeeper implements KeyAwareVault {
     return new VaultKeeper(emptyList(), asList(new NativeAsymmetricCipher()));
   }
 
-  @Deprecated
-  public VaultKeeper(String kmsBaseUrl, String tenantId) {
+  private VaultKeeper(String kmsBaseUrl, String tenantId) {
     this(kmsBaseUrl, tenantId, new EmbeddedCache(entries()), new NativeAsymmetricCipher());
   }
 
