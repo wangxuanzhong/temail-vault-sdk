@@ -50,34 +50,30 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
 /lib64/libstdc++.so.6: version `GLIBCXX_3.4.21' not found (required by /tmp/vault2589851008846924/libVault.so)
 ```
     
-需要安装 `gcc-5.4.0`
+需要安装 `gcc-4.9.2`
 ```
-curl https://ftp.gnu.org/gnu/gcc/gcc-5.4.0/gcc-5.4.0.tar.bz2 -O
-tar xvfj gcc-5.4.0.tar.bz2
-cd gcc-5.4.0
+curl https://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-4.9.2.tar.bz2 -O
+tar xvfj gcc-4.9.2.tar.bz2
+cd gcc-4.9.2
 yum install gmp-devel mpfr-devel libmpc-devel -y
 ./configure --enable-languages=c,c++ --disable-multilib
 make -j$(nproc) && make install
 ```
 
 ### C++ LINKER版本过低
-如需编译C++算法源码，需安装 `ld-2.31` 及 `libuuid-devel`
+如需编译C++算法源码，需安装 `ld-2.27` 及 `libuuid-devel`
 * 安装 `libuuid` 
 ```
 yum -y install libuuid-devel
 ```
 
-* 安装 `ld`
+* 安装 `ld-2.27`
 ```
-wget https://mirrors.tuna.tsinghua.edu.cn/gnu/binutils/binutils-2.31.tar.gz
-tar xzvf binutils-2.31.tar.gz
-cd binutils-2.31
-./configure --enable-languages=c,c++ --disable-multilib
-make -j$(nproc) && make install
+yum install binutils
 ```
 ### Mac编译安装
 * 安装 `openssl`
-```
 编译时，需要openssl
+```
 brew install openssl
 ```
