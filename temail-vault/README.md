@@ -47,10 +47,13 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
 ### C++ 编译器版本过低
 错误信息：
 ```
-/lib64/libstdc++.so.6: version `GLIBCXX_3.4.21' not found (required by /tmp/vault2589851008846924/libVault.so)
+/lib64/libstdc++.so.6: version `GLIBCXX_3.4.15' not found (required by /tmp/vault2589851008846924/libVault.so)
 ```
     
 需要安装 `gcc-4.9.2`
+按以下方式安装
+* CentOS YUM源安装 `yum install -y libgcc`
+* 源码安装
 ```
 curl https://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-4.9.2.tar.bz2 -O
 tar xvfj gcc-4.9.2.tar.bz2

@@ -17,7 +17,7 @@ public interface PublicKeyCipher {
    * 使用提供的密钥进行验签
    * @param publicKey 公钥Base64编码
    * @param plaintext 用于签名的明文
-   * @param signed 待验签的签名Base64编码
+   * @param signature 待验签的签名Base64编码
    * @return 签名是否与明文匹配
    */
   boolean verify(String publicKey, String plaintext, String signature);
