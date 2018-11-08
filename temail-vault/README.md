@@ -55,8 +55,8 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
 * CentOS YUM源安装 `yum install -y libgcc`
 * 源码安装
 ```
-curl https://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-4.9.2.tar.bz2 -O
-tar xvfj gcc-4.9.2.tar.bz2
+wget http://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-4.9.2.tar.gz
+tar xvzf gcc-4.9.2.tar.gz
 cd gcc-4.9.2
 yum install gmp-devel mpfr-devel libmpc-devel -y
 ./configure --enable-languages=c,c++ --disable-multilib

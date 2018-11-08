@@ -45,13 +45,13 @@ public class HttpClientRestClient implements RestClient {
 
       int statusCode = response.getStatusLine().getStatusCode();
       if (statusCode != 200) {
-        LOG.error("Unexpected response from remote url {}: {}", url, json);
+        LOG.debug("Unexpected response from remote url {}: {}", url, json);
         throw new VaultCipherException(
             errorMessage(url) + ", status code = " + statusCode + ", response = " + json);
       }
       return gson.fromJson(json, classType);
     } catch (Exception e) {
-      LOG.error("Unexpected response from remote url {}", url, e);
+      LOG.debug("Unexpected response from remote url {}", url, e);
       throw new VaultCipherException(errorMessage(url, e), e);
     }
   }
