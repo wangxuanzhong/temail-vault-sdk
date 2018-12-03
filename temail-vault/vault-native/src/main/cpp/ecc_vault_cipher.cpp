@@ -1,5 +1,5 @@
 #include "ecc_vault_cipher.h"
-#include "eccApi.h"
+#include "algApi.h"
 #include <vector>
 #include <algorithm>
 #include <string>

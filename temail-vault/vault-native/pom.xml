@@ -18,6 +18,10 @@
     </dependency>
   </dependencies>
 
+  <properties>
+    <algorithm.include.dir>${basedir}/../libecc/src/main/c++/include</algorithm.include.dir>
+  </properties>
+
   <profiles>
     <profile>
       <id>linux</id>
@@ -45,7 +49,7 @@
                   </fileNames>
                 </source>
                 <source>
-                  <directory>${basedir}/src/main/cpp/include</directory>
+                  <directory>${algorithm.include.dir}</directory>
                 </source>
                 <source>
                   <directory>${basedir}/src/main/cpp/</directory>
@@ -106,7 +110,7 @@
                   </fileNames>
                 </source>
                 <source>
-                  <directory>${basedir}/src/main/cpp/include</directory>
+                  <directory>${algorithm.include.dir}</directory>
                 </source>
                 <source>
                   <directory>${basedir}/src/main/cpp/</directory>
@@ -165,7 +169,7 @@
                   </fileNames>
                 </source>
                 <source>
-                  <directory>${basedir}/src/main/cpp/include</directory>
+                  <directory>${algorithm.include.dir}</directory>
                 </source>
                 <source>
                   <directory>${basedir}/src/main/cpp/</directory>
