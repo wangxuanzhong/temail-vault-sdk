@@ -29,7 +29,6 @@ class NativeAsymmetricCipher implements AsymmetricCipher {
   @Override
   public String encrypt(String publicKey, String plaintext) {
     LOG.debug("Encrypting plaintext with public key [{}]", publicKey);
-    // TODO: 2018/9/20 all others are base64 encoded by C++ except encrypted bytes
     final String encrypted = new String(cipher.encrypt(publicKey.getBytes(), plaintext));
     LOG.info("Encrypted plaintext with public key [{}] to [{}]", publicKey, encrypted);
     return encrypted;
