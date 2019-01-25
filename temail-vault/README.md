@@ -104,7 +104,7 @@ c:/OpenSSL-x64/lib/libcrypto.a(ui_openssl.o):ui_openssl.c:(.text+0x7aa): more un
 collect2.exe: error: ld returned 1 exit status
 ```
 
-解决办法：使用如下mingw64 g++编译器
+解决办法：更改PATH，使用如下mingw64 g++编译器
 ```
 $ g++ -v
 Using built-in specs.
