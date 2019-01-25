@@ -30,7 +30,8 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
 
 ### Windows编译步骤
 1. 安装 `GitBash`
-1. 安装 `Mingw64`
+1. 切换到 `windows` 代码分支
+1. 安装 `Mingw64`，选择版本 x86_64-8.1.0-posix-seh-rt_v6-rev0
 1. 安装 [`Perl`](http://strawberryperl.com/)
 1. 下载 [`OpenSSL`](https://www.openssl.org/)
 1. 在 `GitBash` 中编译 `OpenSSL`
@@ -42,6 +43,13 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
   mingw32-make.exe install
   ```
 完成以上安装步骤后，运行 `mvn package -DskipTests`
+
+### Mac编译安装
+* 安装 `openssl`
+编译时，需要openssl
+```
+brew install openssl
+```
 
 ## FAQ
 ### C++ 编译器版本过低
@@ -74,9 +82,31 @@ yum -y install libuuid-devel
 ```
 yum install binutils
 ```
-### Mac编译安装
-* 安装 `openssl`
-编译时，需要openssl
+
+### Windows上找不到 `mutex` 或 `__imp___acrt_iob_func`
+错误信息:
 ```
-brew install openssl
+temail-vault-sdk\temail-vault\libecc\src\main\c++\ALG\src\ecc\ecc.cpp:12:6: error: 'mutex' in namespace 'std' does not name a type
+ std::mutex g_eccKeyMut;
+      ^~~~~
+temail-vault-sdk\temail-vault\libecc\src\main\c++\ALG\src\ecc\ecc.cpp:90:36: error: 'g_eccKeyMut' was not declared in this scope
+  std::unique_lock<std::mutex> lock(g_eccKeyMut);
+                                    ^~~~~~~~~~~
+```
+
+```
+c:/OpenSSL-x64/lib/libcrypto.a(e_capi.o):e_capi.c:(.text+0x3670): undefined reference to `__imp___acrt_iob_func'
+c:/OpenSSL-x64/lib/libcrypto.a(eng_openssl.o):eng_openssl.c:(.text+0x10): undefined reference to `__imp___acrt_iob_func'
+c:/OpenSSL-x64/lib/libcrypto.a(eng_openssl.o):eng_openssl.c:(.text+0x424): undefined reference to `__imp___acrt_iob_func'
+c:/OpenSSL-x64/lib/libcrypto.a(ui_openssl.o):ui_openssl.c:(.text+0x19): undefined reference to `__imp___acrt_iob_func'
+c:/OpenSSL-x64/lib/libcrypto.a(ui_openssl.o):ui_openssl.c:(.text+0x759): undefined reference to `__imp___acrt_iob_func'
+c:/OpenSSL-x64/lib/libcrypto.a(ui_openssl.o):ui_openssl.c:(.text+0x7aa): more undefined references to `__imp___acrt_iob_func' follow
+collect2.exe: error: ld returned 1 exit status
+```
+
+解决办法：使用如下mingw64 g++编译器
+```
+$ g++ -v
+Using built-in specs.
+COLLECT_GCC=E:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin\g++.exe
 ```
