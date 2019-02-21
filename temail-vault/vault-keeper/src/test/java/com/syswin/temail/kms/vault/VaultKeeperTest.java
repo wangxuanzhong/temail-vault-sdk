@@ -25,11 +25,14 @@ public class VaultKeeperTest {
 
   @Test
   public void shouldUseSpecifiedCipher() {
-    KeyAwareAsymmetricCipher asymmetricCipher = vaultKeeper.asymmetricCipher(ECDSA);
-    assertThat(asymmetricCipher).isEqualTo(keyAwareCipher);
+    KeyAwareAsymmetricCipher keyAwareAsymmetricCipher = vaultKeeper.asymmetricCipher(ECDSA);
+    assertThat(keyAwareAsymmetricCipher).isEqualTo(keyAwareCipher);
 
     PublicKeyCipher cipher = vaultKeeper.publicKeyCipher(ECDSA);
     assertThat(cipher).isEqualTo(this.cipher);
+
+    AsymmetricCipher asymmetricCipher = vaultKeeper.plainAsymmetricCipher(ECDSA);
+    assertThat(asymmetricCipher).isEqualTo(this.cipher);
   }
 
   @Test

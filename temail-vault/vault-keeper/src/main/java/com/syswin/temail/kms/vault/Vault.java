@@ -6,5 +6,7 @@ public interface Vault {
 
   PublicKeyCipher publicKeyCipher(CipherAlgorithm algorithm);
 
+  AsymmetricCipher plainAsymmetricCipher(CipherAlgorithm algorithm);
+
   SymmetricCipher symmetricCipher();
 }

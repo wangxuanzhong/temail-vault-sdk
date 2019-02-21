@@ -71,6 +71,11 @@ public final class VaultKeeper implements KeyAwareVault {
     return symmetricCipher;
   }
 
+  @Override
+  public AsymmetricCipher plainAsymmetricCipher(CipherAlgorithm algorithm) {
+    return asymmetricCiphers.get(algorithm);
+  }
+
   private static int entries() {
     String entries = System.getProperty(KEY_VAULT_CACHE_ENTRIES);
     if (entries == null) {
