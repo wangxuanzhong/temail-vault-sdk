@@ -4,7 +4,7 @@
 
   <groupId>com.syswin.temail</groupId>
   <artifactId>temail-vault-sdk</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -26,7 +26,7 @@
   <scm>
     <connection>scm:git:git@172.28.4.12:java_temail/temail-vault-sdk.git</connection>
     <developerConnection>scm:git:git@172.28.4.12:java_temail/temail-vault-sdk.git</developerConnection>
-    <tag>v1.1.0</tag>
+    <tag>${project.version}</tag>
   </scm>
 
   <dependencyManagement>
@@ -39,7 +39,7 @@
       <dependency>
         <groupId>com.syswin.temail</groupId>
         <artifactId>vault-keeper</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
@@ -50,7 +50,7 @@
       <dependency>
         <groupId>com.syswin.temail</groupId>
         <artifactId>vault-jni</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
