@@ -1,27 +1,64 @@
 package com.syswin.temail.kms.sdk.test;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.syswin.temail.kms.vault.CipherAlgorithm.ECDSA;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.google.gson.Gson;
 import com.syswin.temail.kms.vault.KeyAwareVault;
+import com.syswin.temail.kms.vault.Response;
+import com.syswin.temail.kms.vault.VaultKeeper;
 import java.util.Optional;
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@SpringBootApplication
-public class TestApplication implements CommandLineRunner {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TestApp.class)
+public class IntegrationTest {
+  @ClassRule
+  public static final WireMockRule wireMockRule = new WireMockRule(8094);
+  private static final Gson gson = new Gson();
 
-  public static void main(String[] args) {
-    SpringApplication.run(TestApplication.class, args);
-  }
+  private static final String eccTemail = "ecctemail@temail.com";
 
   @Autowired
   private KeyAwareVault vault;
 
-  @Override
-  public void run(String... args) {
+  @BeforeClass
+  public static void setUp() {
+    stubFor(post(urlEqualTo("/asymmetric/register"))
+        .withRequestBody(equalToJson("{\n" +
+            "  \"token\": \"syswin\",\n" +
+            "  \"text\": \"" + eccTemail + "\",\n" +
+            "  \"algorithm\": \"ECDSA\"\n" +
+            "}"))
+        .willReturn(
+            aResponse()
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+                .withStatus(SC_OK)
+                .withBody(gson.toJson(new Response(
+                    SC_OK,
+                    null,
+                    VaultKeeper.keyAwareVault("localhost:8094", "syswin")
+                        .plainAsymmetricCipher(ECDSA)
+                        .getKeyPair())))));
+  }
+
+  @Test
+  public void testAll() {
     //temail aes注册
     String temail = "milk" + (System.currentTimeMillis()) + "@temail.com";
     String symmetricKey = vault.symmetricCipher().getKey(temail);
@@ -35,7 +72,7 @@ public class TestApplication implements CommandLineRunner {
     System.out.println("decryptedStr : " + decryptedStr);
     Assert.assertEquals(text, decryptedStr);
     System.out.println("-------------------------------");
-    String eccTemail = "ecctemail" + (System.currentTimeMillis()) + "@temail.com";
+
     //sdk ecc注册
     String unsign = "this is a text";
     String signature = vault.asymmetricCipher(ECDSA).register(eccTemail);
