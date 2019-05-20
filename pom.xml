@@ -18,7 +18,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <jmh.version>1.19</jmh.version>
     <sonar.host.url>http://172.28.39.51:9000</sonar.host.url>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
   <modules>
     <module>kms-sdk</module>
