@@ -17,6 +17,10 @@
   <dependencies>
     <dependency>
       <groupId>com.syswin.temail</groupId>
+      <artifactId>vault-jni</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.syswin.temail</groupId>
       <artifactId>vault-keeper</artifactId>
     </dependency>
     <dependency>
