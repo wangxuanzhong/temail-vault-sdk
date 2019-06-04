@@ -36,7 +36,7 @@ public class EhCacheConfig {
     try {
       cacheManager.close();
     } catch (Exception e) {
-      LOG.error("Failed to close cache manager", e);
+      LOG.warn("Failed to close cache manager", e);
     }
   }
 }

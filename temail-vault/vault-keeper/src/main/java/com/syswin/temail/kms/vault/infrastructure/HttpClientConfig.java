@@ -48,13 +48,13 @@ public class HttpClientConfig {
         try {
           client.close();
         } catch (IOException e) {
-          LOG.error("Failed to close http client", e);
+          LOG.warn("Failed to close http client", e);
         }
       });
 
       connManager.close();
     } catch (Exception e) {
-      LOG.error("Failed to close http client connection manager", e);
+      LOG.warn("Failed to close http client connection manager", e);
     }
   }
 }

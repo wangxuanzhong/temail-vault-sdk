@@ -1,5 +1,6 @@
 package com.syswin.temail.kms.vault.infrastructure;
 
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 import com.google.gson.Gson;
@@ -38,7 +39,7 @@ public class HttpClientRestClient implements RestClient {
 
       StringEntity entity = new StringEntity(gson.toJson(request));
       httpPost.setEntity(entity);
-      httpPost.setHeader("Content-Type", APPLICATION_JSON.getMimeType());
+      httpPost.setHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType());
 
       CloseableHttpResponse response = client.execute(httpPost);
       String json = EntityUtils.toString(response.getEntity());

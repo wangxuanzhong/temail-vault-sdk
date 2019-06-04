@@ -31,7 +31,7 @@ class RemoteKeyRegistry implements KeyRegistry {
 
     KeyPair keyPair = response.getKeyPair();
     cache.put(key, keyPair);
-    LOG.info("Registered user {} at path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
+    LOG.debug("Registered user {} at path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
     return keyPair;
   }
 
@@ -47,9 +47,9 @@ class RemoteKeyRegistry implements KeyRegistry {
 
       keyPair = response.getKeyPair();
       cache.put(key, keyPair);
-      LOG.info("Retrieved user {} from path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
+      LOG.debug("Retrieved user {} from path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
     } else {
-      LOG.info("Retrieved user {} locally with public key [{}]", key, keyPair.getPublic());
+      LOG.debug("Retrieved user {} locally with public key [{}]", key, keyPair.getPublic());
     }
     return keyPair;
   }
