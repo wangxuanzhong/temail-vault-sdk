@@ -10,17 +10,39 @@
   <artifactId>vault-native</artifactId>
   <packaging>so</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.syswin.temail</groupId>
-      <artifactId>libecc</artifactId>
-      <type>a</type>
-    </dependency>
-  </dependencies>
-
   <properties>
     <algorithm.include.dir>${basedir}/../libecc/src/main/c++/include</algorithm.include.dir>
+    <algorithm.lib.dir>${basedir}/../libecc/libs</algorithm.lib.dir>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <id>copy-libs</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/src/main/cpp/lib/native</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${algorithm.lib.dir}/linux</directory>
+                  <includes>
+                    <include>libecc.*</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <profiles>
     <profile>
@@ -31,6 +53,9 @@
           <name>Linux</name>
         </os>
       </activation>
+      <properties>
+        <platform.name>linux</platform.name>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -69,6 +94,7 @@
               <linkerStartOptions>
                 <linkerStartOption>-I ${JAVA_HOME}/lib/</linkerStartOption>
                 <linkerStartOption>-L ${basedir}/src/main/cpp/lib</linkerStartOption>
+                <linkerStartOption>-L ${algorithm.lib.dir}/${platform.name}</linkerStartOption>
               </linkerStartOptions>
               <linkerEndOptions>
                 <linkerEndOption>-shared</linkerEndOption>
@@ -79,6 +105,7 @@
                 <linkerEndOption>-luuid</linkerEndOption>
                 <linkerEndOption>-lssl</linkerEndOption>
                 <linkerEndOption>-lcrypto</linkerEndOption>
+                <linkerEndOption>-lecc</linkerEndOption>
               </linkerEndOptions>
             </configuration>
           </plugin>
@@ -92,6 +119,9 @@
           <family>mac</family>
         </os>
       </activation>
+      <properties>
+        <platform.name>mac</platform.name>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -130,6 +160,7 @@
               <linkerStartOptions>
                 <linkerStartOption>-L ${JAVA_HOME}/lib/</linkerStartOption>
                 <linkerStartOption>-L /usr/local/opt/openssl/lib/</linkerStartOption>
+                <linkerStartOption>-L ${algorithm.lib.dir}/${platform.name}</linkerStartOption>
               </linkerStartOptions>
               <linkerEndOptions>
                 <linkerEndOption>-shared</linkerEndOption>
@@ -138,6 +169,7 @@
                 <linkerEndOption>-ldl</linkerEndOption>
                 <linkerEndOption>-lssl</linkerEndOption>
                 <linkerEndOption>-lcrypto</linkerEndOption>
+                <linkerEndOption>-lecc</linkerEndOption>
               </linkerEndOptions>
             </configuration>
           </plugin>
@@ -151,6 +183,9 @@
           <family>Windows</family>
         </os>
       </activation>
+      <properties>
+        <platform.name>win</platform.name>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -189,6 +224,7 @@
               <linkerStartOptions>
                 <linkerStartOption>-L ${JAVA_HOME}/lib/</linkerStartOption>
                 <linkerStartOption>-L C:/OpenSSL-x64/lib/</linkerStartOption>
+                <linkerStartOption>-L ${algorithm.lib.dir}/${platform.name}</linkerStartOption>
               </linkerStartOptions>
               <linkerEndOptions>
                 <linkerEndOption>-shared</linkerEndOption>
@@ -196,6 +232,7 @@
                 <linkerEndOption>-lstdc++</linkerEndOption>
                 <linkerEndOption>-lssl</linkerEndOption>
                 <linkerEndOption>-lcrypto</linkerEndOption>
+                <linkerEndOption>-lecc</linkerEndOption>
               </linkerEndOptions>
             </configuration>
           </plugin>
