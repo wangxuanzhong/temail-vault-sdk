@@ -46,15 +46,6 @@
                   <outputDirectory>${project.build.directory}/classes/native</outputDirectory>
                   <destFileName>libVault.so</destFileName>
                 </artifactItem>
-                <artifactItem>
-                  <groupId>com.syswin.temail</groupId>
-                  <artifactId>libecc</artifactId>
-                  <version>${project.version}</version>
-                  <type>a</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/classes/native</outputDirectory>
-                  <destFileName>libecc.a</destFileName>
-                </artifactItem>
               </artifactItems>
             </configuration>
           </execution>
