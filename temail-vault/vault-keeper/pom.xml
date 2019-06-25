@@ -12,11 +12,11 @@
   <dependencies>
     <dependency>
       <groupId>com.syswin.temail</groupId>
-      <artifactId>vault-jni</artifactId>
+      <artifactId>vault-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
+      <groupId>com.syswin.temail</groupId>
+      <artifactId>vault-jni</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

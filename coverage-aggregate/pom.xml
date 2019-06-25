@@ -22,6 +22,19 @@
     </dependency>
     <dependency>
       <groupId>com.syswin.temail</groupId>
+      <artifactId>vault-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.syswin.temail</groupId>
+      <artifactId>symmetric-cipher</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.syswin.temail</groupId>
+      <artifactId>integration-tests</artifactId>
+      <version>1.1.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.syswin.temail</groupId>
       <artifactId>vault-spring-boot-starter</artifactId>
       <version>1.1.1-SNAPSHOT</version>
     </dependency>

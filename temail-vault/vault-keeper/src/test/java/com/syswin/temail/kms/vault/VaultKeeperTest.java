@@ -6,6 +6,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -40,5 +41,12 @@ public class VaultKeeperTest {
     System.setProperty(KEY_VAULT_CACHE_ENTRIES, "x");
     vaultKeeper = new VaultKeeper(singletonList(keyAwareCipher), singletonList(cipher));
     System.clearProperty(KEY_VAULT_CACHE_ENTRIES);
+  }
+
+  @Test
+  public void shouldUseNullSymmetricCipher() {
+    SymmetricCipher cipher = vaultKeeper.symmetricCipher();
+
+    assertThat(cipher).isInstanceOf(NullSymmetricCipher.class);
   }
 }

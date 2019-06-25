@@ -3,7 +3,6 @@ package com.syswin.temail.kms.vault;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-import com.syswin.temail.kms.vault.aes.AESCipher;
 import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import com.syswin.temail.kms.vault.cache.EmbeddedCache;
 import com.syswin.temail.kms.vault.cache.ICache;
@@ -11,7 +10,9 @@ import com.syswin.temail.kms.vault.infrastructure.HttpClientRestClient;
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,12 @@ public final class VaultKeeper implements KeyAwareVault {
     this.asymmetricCiphers = new HashMap<>();
     asymmetricCiphers.forEach(cipher -> this.asymmetricCiphers.put(cipher.algorithm(), cipher));
 
-    this.symmetricCipher = new AESCipher();
+    Iterator<SymmetricCipher> iterator = ServiceLoader.load(SymmetricCipher.class).iterator();
+    if (iterator.hasNext()) {
+      this.symmetricCipher = iterator.next();
+    } else {
+      this.symmetricCipher = new NullSymmetricCipher();
+    }
   }
 
   @Override

@@ -24,6 +24,7 @@
     <module>kms-sdk</module>
     <module>temail-vault</module>
     <module>coverage-aggregate</module>
+    <module>integration-tests</module>
   </modules>
 
   <scm>
@@ -37,7 +38,17 @@
       <dependency>
         <groupId>com.syswin.temail</groupId>
         <artifactId>kms-sdk</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.syswin.temail</groupId>
+        <artifactId>vault-common</artifactId>
+        <version>1.1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.syswin.temail</groupId>
+        <artifactId>symmetric-cipher</artifactId>
+        <version>1.1.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.syswin.temail</groupId>
