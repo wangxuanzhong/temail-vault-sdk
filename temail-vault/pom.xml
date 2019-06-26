@@ -39,7 +39,6 @@
     <module>vault-native</module>
     <module>vault-jni</module>
     <module>vault-keeper</module>
-    <module>symmetric-cipher</module>
     <module>vault-common</module>
   </modules>
 
