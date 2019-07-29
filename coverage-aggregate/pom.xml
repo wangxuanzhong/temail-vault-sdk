@@ -50,10 +50,6 @@
     </dependency>
     <dependency>
       <groupId>com.syswin.temail</groupId>
-      <artifactId>symmetric-cipher</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.syswin.temail</groupId>
       <artifactId>integration-tests</artifactId>
       <version>1.1.1-SNAPSHOT</version>
     </dependency>

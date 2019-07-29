@@ -50,7 +50,7 @@
             <id>rename-file</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>rename</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <sourceFile>${algorithm.lib.dir}/${platform.name}/libecc.${platform.lib.ext}</sourceFile>

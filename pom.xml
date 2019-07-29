@@ -71,11 +71,6 @@
       </dependency>
       <dependency>
         <groupId>com.syswin.temail</groupId>
-        <artifactId>symmetric-cipher</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>com.syswin.temail</groupId>
         <artifactId>vault-keeper</artifactId>
         <version>1.1.1-SNAPSHOT</version>
         <exclusions>
