@@ -74,6 +74,7 @@ public class HttpClientRestClient implements RestClient {
         throw new VaultCipherException(
             errorMessage(url) + ", status code = " + statusCode + ", response = " + json);
       }
+      LOG.debug("Retrieved response from remote url {} successfully: {}", url, json);
       return gson.fromJson(json, classType);
     } catch (Exception e) {
       LOG.debug("Unexpected response from remote url {}", url, e);

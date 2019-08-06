@@ -56,7 +56,12 @@ class RemoteKeyRegistry implements KeyRegistry {
     this.restClient = restClient;
     this.algorithm = algorithm;
 
-    ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(runnable -> {
+      Thread thread = new Thread(runnable);
+      thread.setDaemon(true);
+      return thread;
+    });
+
     scheduledExecutor.scheduleWithFixedDelay(() -> {
       try {
         Request request = pendingRequests.take();
@@ -94,7 +99,7 @@ class RemoteKeyRegistry implements KeyRegistry {
 
       keyPair = response.getKeyPair();
       cache.put(key, keyPair);
-      LOG.debug("Retrieved user {} from path {} with public key [{}]", key, PATH_REGISTRATION, keyPair.getPublic());
+      LOG.debug("Retrieved user {} from path {} with public key [{}]", key, PATH_RETRIEVE, keyPair.getPublic());
     } else {
       LOG.debug("Retrieved user {} locally with public key [{}]", key, keyPair.getPublic());
     }
@@ -104,12 +109,14 @@ class RemoteKeyRegistry implements KeyRegistry {
   @Override
   public void remove(String tenantId, String key) {
     cache.remove(key);
+    LOG.debug("Deleted user {} locally", key);
     deleteRemoteKey(restClient, new Request(tenantId, key, algorithm));
   }
 
   private void deleteRemoteKey(RestClient restClient, Request request) {
     try {
       restClient.post(PATH_DELETE, request, Response.class);
+      LOG.debug("Deleted user {} from path {}", request.text(), PATH_DELETE);
     } catch (Exception e) {
       LOG.warn("Failed to delete remote key of user {}, will try again", request.text(), e);
       pendingRequests.offer(request);
