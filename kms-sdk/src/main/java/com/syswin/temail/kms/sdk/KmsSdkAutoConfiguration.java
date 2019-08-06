@@ -39,8 +39,12 @@ class KmsSdkAutoConfiguration {
 
   @Bean
   @ConditionalOnExpression("!'${app.vault.registry.url}'.isEmpty()")
-  KeyAwareVault vaultKeeper(@Value("${app.vault.registry.url}") String baseUrl, @Value("${app.vault.registry.token}") String token) {
-    return VaultKeeper.keyAwareVault(baseUrl, token);
+  KeyAwareVault vaultKeeper(
+      @Value("${app.vault.cache.entries:1000}") int entries,
+      @Value("${app.vault.cache.ttl:3600}") int timeToLive,
+      @Value("${app.vault.registry.url}") String baseUrl,
+      @Value("${app.vault.registry.token}") String token) {
+    return VaultKeeper.keyAwareVault(baseUrl, token, entries, timeToLive);
   }
 
   @Bean

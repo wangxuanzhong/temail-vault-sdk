@@ -25,7 +25,9 @@
 package com.syswin.temail.kms.vault.cache;
 
 import static com.seanyinx.github.unit.scaffolding.Randomness.uniquify;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.waitAtMost;
 
 import com.syswin.temail.kms.vault.KeyPair;
 import org.junit.Test;
@@ -37,7 +39,7 @@ public class EmbeddedCacheTest {
   private final String publicKey = uniquify("private key");
   private final KeyPair keyPair = new KeyPair(privateKey.getBytes(), publicKey.getBytes());
 
-  private final ICache cache = new EmbeddedCache(10);
+  private final ICache cache = new EmbeddedCache(10, 1L);
 
   @Test
   public void shouldGetValueAfterSaving() {
@@ -60,5 +62,14 @@ public class EmbeddedCacheTest {
 
     cache.remove(userId);
     assertThat(cache.get(userId)).isNull();
+  }
+
+  @Test
+  public void shouldExpireExistingKey() {
+    cache.put(userId, keyPair);
+    assertThat(cache.get(userId)).isNotNull();
+
+    waitAtMost(2, SECONDS).untilAsserted(
+        () -> assertThat(cache.get(userId)).isNull());
   }
 }

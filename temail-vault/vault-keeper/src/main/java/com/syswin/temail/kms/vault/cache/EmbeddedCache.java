@@ -24,9 +24,10 @@
 
 package com.syswin.temail.kms.vault.cache;
 
-import static org.ehcache.expiry.ExpiryPolicy.NO_EXPIRY;
+import static org.ehcache.config.builders.ExpiryPolicyBuilder.timeToLiveExpiration;
 
 import com.syswin.temail.kms.vault.KeyPair;
+import java.time.Duration;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
@@ -38,18 +39,18 @@ public class EmbeddedCache implements ICache {
   private final CacheManager cacheManager;
   private final Cache<String, KeyPair> cache;
 
-  public EmbeddedCache(int entries) {
+  public EmbeddedCache(int entries, long timeToLive) {
     this.cacheManager = EhCacheConfig.getInstance().cacheManager();
-    this.cache = createCache(CACHE_NAME_PREFIX + System.nanoTime(), entries);
+    this.cache = createCache(CACHE_NAME_PREFIX + System.nanoTime(), entries, timeToLive);
   }
 
-  private Cache<String, KeyPair> createCache(String cacheName, int entries) {
+  private Cache<String, KeyPair> createCache(String cacheName, int entries, long timeToLive) {
     CacheConfiguration<String, KeyPair> cacheConfiguration = CacheConfigurationBuilder
         .newCacheConfigurationBuilder(
             String.class,
             KeyPair.class,
             ResourcePoolsBuilder.heap(entries))
-        .withExpiry(NO_EXPIRY)
+        .withExpiry(timeToLiveExpiration(Duration.ofSeconds(timeToLive)))
         .build();
 
     return cacheManager.createCache(cacheName, cacheConfiguration);

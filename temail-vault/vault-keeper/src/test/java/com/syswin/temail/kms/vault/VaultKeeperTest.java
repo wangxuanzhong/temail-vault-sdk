@@ -25,7 +25,6 @@
 package com.syswin.temail.kms.vault;
 
 import static com.syswin.temail.kms.vault.CipherAlgorithm.ECDSA;
-import static com.syswin.temail.kms.vault.VaultKeeper.KEY_VAULT_CACHE_ENTRIES;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -58,13 +57,6 @@ public class VaultKeeperTest {
 
     AsymmetricCipher asymmetricCipher = vaultKeeper.plainAsymmetricCipher(ECDSA);
     assertThat(asymmetricCipher).isEqualTo(this.cipher);
-  }
-
-  @Test
-  public void doesNotBlowIfSettingCacheEntriesWrong() {
-    System.setProperty(KEY_VAULT_CACHE_ENTRIES, "x");
-    vaultKeeper = new VaultKeeper(singletonList(keyAwareCipher), singletonList(cipher));
-    System.clearProperty(KEY_VAULT_CACHE_ENTRIES);
   }
 
   @Test

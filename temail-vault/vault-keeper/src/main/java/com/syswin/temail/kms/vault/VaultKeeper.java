@@ -31,36 +31,35 @@ import com.syswin.temail.kms.vault.aes.SymmetricCipher;
 import com.syswin.temail.kms.vault.cache.EmbeddedCache;
 import com.syswin.temail.kms.vault.cache.ICache;
 import com.syswin.temail.kms.vault.infrastructure.HttpClientRestClient;
-import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class VaultKeeper implements KeyAwareVault {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
   private static final int DEFAULT_CACHE_ENTRIES = 1000;
-  static final String KEY_VAULT_CACHE_ENTRIES = "app.vault.cache.entries";
+  private static final int DEFAULT_CACHE_TTL = 3600;
 
   private final Map<CipherAlgorithm, KeyAwareAsymmetricCipher> keyAwareAsymmetricCiphers;
   private final Map<CipherAlgorithm, AsymmetricCipher> asymmetricCiphers;
   private final SymmetricCipher symmetricCipher;
 
   public static KeyAwareVault keyAwareVault(String kmsBaseUrl, String tenantId) {
-    return new VaultKeeper(kmsBaseUrl, tenantId);
+    return new VaultKeeper(kmsBaseUrl, tenantId, DEFAULT_CACHE_ENTRIES, DEFAULT_CACHE_TTL);
+  }
+
+  public static KeyAwareVault keyAwareVault(String kmsBaseUrl, String tenantId, int entries, int timeToLive) {
+    return new VaultKeeper(kmsBaseUrl, tenantId, entries, timeToLive);
   }
 
   public static Vault vault() {
     return new VaultKeeper(emptyList(), asList(new NativeAsymmetricCipher()));
   }
 
-  private VaultKeeper(String kmsBaseUrl, String tenantId) {
-    this(kmsBaseUrl, tenantId, new EmbeddedCache(entries()), new NativeAsymmetricCipher());
+  private VaultKeeper(String kmsBaseUrl, String tenantId, int entries, int timeToLive) {
+    this(kmsBaseUrl, tenantId, new EmbeddedCache(entries, timeToLive), new NativeAsymmetricCipher());
   }
 
   private VaultKeeper(String baseUrl, String tenantId, ICache iCache, AsymmetricCipher cipher) {
@@ -104,19 +103,5 @@ public final class VaultKeeper implements KeyAwareVault {
   @Override
   public AsymmetricCipher plainAsymmetricCipher(CipherAlgorithm algorithm) {
     return asymmetricCiphers.get(algorithm);
-  }
-
-  private static int entries() {
-    String entries = System.getProperty(KEY_VAULT_CACHE_ENTRIES);
-    if (entries == null) {
-      LOG.info("No configured key cache entries and setting default cache entries to {}", DEFAULT_CACHE_ENTRIES);
-      return DEFAULT_CACHE_ENTRIES;
-    }
-    try {
-      return Integer.parseInt(entries);
-    } catch (NumberFormatException e) {
-      LOG.warn("Failed to parse configured key cache entries {} and setting default cache entries to {}", entries, DEFAULT_CACHE_ENTRIES, e);
-      return DEFAULT_CACHE_ENTRIES;
-    }
   }
 }

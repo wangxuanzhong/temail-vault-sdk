@@ -20,4 +20,12 @@ Benchmark          Mode  Cnt     Score      Error  Units
 BenchMark.decrypt  avgt  200  9088.184 ±   34.702  us/op
 BenchMark.encrypt  avgt  200  9488.350 ±   32.648  us/op
 BenchMark.sign     avgt  200  2526.902 ±  510.948  us/op
-BenchMark.verify   avgt  200  2872.475 ± 1015.743  us/op```
+BenchMark.verify   avgt  200  2872.475 ± 1015.743  us/op
+```
+
+### 配置
+使用`vault-spring-boot-starter`依赖时，缓存大小及过期时间可通过如下参数控制
+```
+app.vault.cache.entries=1000 # 默认缓存1000个密钥
+app.vault.cache.ttl=3600 # 缓存默认1小时过期
+```
