@@ -24,26 +24,49 @@
 
 package com.syswin.temail.kms.vault;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import com.syswin.temail.kms.vault.cache.ICache;
 import com.syswin.temail.kms.vault.exceptions.VaultCipherException;
 import java.lang.invoke.MethodHandles;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class RemoteKeyRegistry implements KeyRegistry {
+
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final int RETRY_DELAY = 200;
+  private static final int MAX_PENDING_REQUESTS = 1000;
 
   static final String PATH_REGISTRATION = "/asymmetric/register";
   static final String PATH_RETRIEVE = "/asymmetric/key";
+  static final String PATH_DELETE = "/asymmetricKey/remove";
 
   private final ICache cache;
   private final RestClient restClient;
   private final CipherAlgorithm algorithm;
+  private final BlockingQueue<Request> pendingRequests = new ArrayBlockingQueue<>(MAX_PENDING_REQUESTS);
 
   RemoteKeyRegistry(ICache cache, RestClient restClient, CipherAlgorithm algorithm) {
     this.cache = cache;
     this.restClient = restClient;
     this.algorithm = algorithm;
+
+    ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    scheduledExecutor.scheduleWithFixedDelay(() -> {
+      try {
+        Request request = pendingRequests.take();
+        deleteRemoteKey(restClient, request);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }, RETRY_DELAY, RETRY_DELAY, MILLISECONDS);
+
+    Runtime.getRuntime().addShutdownHook(new Thread(scheduledExecutor::shutdownNow));
   }
 
   @Override
@@ -80,7 +103,17 @@ class RemoteKeyRegistry implements KeyRegistry {
 
   @Override
   public void remove(String tenantId, String key) {
-    // TODO: 2018/9/21 not supported on server side yet
+    cache.remove(key);
+    deleteRemoteKey(restClient, new Request(tenantId, key, algorithm));
+  }
+
+  private void deleteRemoteKey(RestClient restClient, Request request) {
+    try {
+      restClient.post(PATH_DELETE, request, Response.class);
+    } catch (Exception e) {
+      LOG.warn("Failed to delete remote key of user {}, will try again", request.text(), e);
+      pendingRequests.offer(request);
+    }
   }
 
   private void validateResponse(Response response) {

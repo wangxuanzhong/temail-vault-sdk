@@ -39,6 +39,10 @@ class Request {
     this.algorithm = algorithm.name();
   }
 
+  String text() {
+    return text;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

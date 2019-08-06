@@ -27,13 +27,17 @@ package com.syswin.temail.kms.vault;
 import static com.seanyinx.github.unit.scaffolding.AssertUtils.expectFailing;
 import static com.seanyinx.github.unit.scaffolding.Randomness.uniquify;
 import static com.syswin.temail.kms.vault.CipherAlgorithm.ECDSA;
+import static com.syswin.temail.kms.vault.RemoteKeyRegistry.PATH_DELETE;
 import static com.syswin.temail.kms.vault.RemoteKeyRegistry.PATH_REGISTRATION;
 import static com.syswin.temail.kms.vault.RemoteKeyRegistry.PATH_RETRIEVE;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -146,5 +150,29 @@ public class RemoteKeyRegistryTest {
 
     verify(iCache, never()).put(anyString(), any(KeyPair.class));
     verify(restClient, never()).post(eq(PATH_RETRIEVE), any(Request.class), eq(Response.class));
+  }
+
+  @Test
+  public void deleteKeyFromCacheAndRemote() {
+    when(restClient.post(PATH_DELETE, request, Response.class))
+        .thenReturn(new Response(200, null, null));
+
+    cache.remove(tenantId, userId);
+
+    verify(iCache).remove(userId);
+    verify(restClient).post(PATH_DELETE, request, Response.class);
+  }
+
+  @Test
+  public void retryFailedDeletion() {
+    when(restClient.post(PATH_DELETE, request, Response.class))
+        .thenThrow(new RuntimeException("oops"))
+        .thenReturn(new Response(200, null, null));
+
+    cache.remove(tenantId, userId);
+
+    verify(iCache).remove(userId);
+    waitAtMost(2, SECONDS).untilAsserted(
+        () -> verify(restClient, times(2)).post(PATH_DELETE, request, Response.class));
   }
 }
