@@ -27,7 +27,7 @@
   <parent>
     <artifactId>temail-vault-sdk</artifactId>
     <groupId>com.syswin.temail</groupId>
-    <version>1.2.1</version>
+    <version>1.2.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -49,12 +49,12 @@
     <dependency>
       <groupId>com.syswin.temail</groupId>
       <artifactId>integration-tests</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.syswin.temail</groupId>
       <artifactId>vault-spring-boot-starter</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
